@@ -2,3 +2,4 @@
 *.csv
 clase_03_cnn_vision_artificial/data
 clase_03_cnn_vision_artificial/archive
+!clase_01_text_mining_embeddings/Clase-01-Text-Mining-y-Embeddings/datasets/*.csv
