@@ -660,4 +660,4 @@ flowchart LR
 - ¿Por qué la atención escaló mejor que RNN/LSTM en tareas de largo contexto?
 
 ---
-
+T
