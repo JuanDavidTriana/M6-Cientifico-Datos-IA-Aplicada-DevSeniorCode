@@ -1,5 +1,23 @@
 *.conda
 *.csv
-clase_03_cnn_vision_artificial/data
-clase_03_cnn_vision_artificial/archive
-!clase_01_text_mining_embeddings/Clase-01-Text-Mining-y-Embeddings/datasets/*.csv
+
+# Datasets pequenos que SI se versionan
+!Unidad 2/**/datasets/*.csv
+!Unidad 1/clase_01_ann_tensorflow/Clase 1/Ejemplo/loan_approval_dataset.csv
+
+# Datos pesados de la clase CNN
+Unidad 1/clase_03_cnn_vision_artificial/data/
+Unidad 1/clase_03_cnn_vision_artificial/archive/
+
+# Modelos entrenados / descargados (pesan cientos de MB)
+**/modelo/
+**/modelos/
+
+# Python / Jupyter
+__pycache__/
+.ipynb_checkpoints/
+
+# Clases que aun no se han dado (quitar la linea cuando se dicte la clase)
+Unidad 2/clase_02_transformers_minigpt/
+Unidad 2/clase_03_ia_generativa_prompt_engineering/
+Unidad 2/clase_04_nlp_aplicado_huggingface/
