@@ -27,9 +27,10 @@ Unidad 2/clase_02_transformers_minigpt/*
 !Unidad 2/clase_02_transformers_minigpt/datasets/
 Unidad 2/clase_04_nlp_aplicado_huggingface/*
 
-# Clases que aun no se han dado (quitar la linea cuando se dicte la clase)
-# Clase 3: solo se sube lo de estudiantes (requirements, notebook vacio y datasets)
-unidad 2/clase_03_ia_generativa_prompt_engineering/*
-!unidad 2/clase_03_ia_generativa_prompt_engineering/requirements.txt
-!unidad 2/clase_03_ia_generativa_prompt_engineering/notebooks_estudiantes/
-!unidad 2/clase_03_ia_generativa_prompt_engineering/datasets/
+# Clase 3: solo se sube lo de estudiantes (README, requirements, notebook vacio y datasets)
+Unidad 2/clase_03_ia_generativa_prompt_engineering/*
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/README.md
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/requirements.txt
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/notebooks_estudiantes/
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/datasets/
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/web/
