@@ -16,6 +16,8 @@ Unidad 1/clase_03_cnn_vision_artificial/archive/
 # Python / Jupyter
 __pycache__/
 .ipynb_checkpoints/
+# Versiones anteriores de las clases (solo para el docente)
+**/_anterior*/
 
 # Clases que aun no se han dado (quitar la linea cuando se dicte la clase)
 # Clase 2: solo se sube lo de estudiantes (requirements, notebook vacio y datasets)
@@ -25,3 +27,10 @@ Unidad 2/clase_02_transformers_minigpt/*
 !Unidad 2/clase_02_transformers_minigpt/datasets/
 Unidad 2/clase_03_ia_generativa_prompt_engineering/
 Unidad 2/clase_04_nlp_aplicado_huggingface/
+
+# Clases que aun no se han dado (quitar la linea cuando se dicte la clase)
+# Clase 3: solo se sube lo de estudiantes (requirements, notebook vacio y datasets)
+Unidad 2/clase_03_ia_generativa_prompt_engineering/*
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/requirements.txt
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/notebooks_estudiantes/
+!Unidad 2/clase_03_ia_generativa_prompt_engineering/datasets/devsenior_conocimiento.jsonl
