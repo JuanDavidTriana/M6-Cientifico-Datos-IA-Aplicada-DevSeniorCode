@@ -1,0 +1,9 @@
+torch
+transformers>=4.51
+datasets
+scikit-learn
+pandas
+matplotlib
+jupyter
+# Opcional: interfaz web del chat de Devi (B7.3)
+gradio

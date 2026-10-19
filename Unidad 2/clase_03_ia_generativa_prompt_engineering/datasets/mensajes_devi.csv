@@ -1,0 +1,39 @@
+texto,intencion,sentimiento
+"Hola, soy Valentina Ríos desde Medellín. ¿Qué incluye el Máster en IA?",master_ia,neutral
+"Buenas, me llamo Andrés Pérez y vivo en Lima. ¿Cuántos módulos tiene el máster de inteligencia artificial?",master_ia,neutral
+"Me encanta lo que veo del máster, ¿qué proyecto final se hace?",master_ia,positivo
+¿En el máster de IA ven redes neuronales y transformers?,master_ia,neutral
+"Soy Laura Gómez, de Bogotá. ¿El máster sirve si nunca he programado?",master_ia,neutral
+"¿Qué herramientas usan en el máster, Python y TensorFlow?",master_ia,neutral
+"Llevo tres días esperando que alguien me diga cuánto cuesta el máster y nadie responde, qué mal servicio",inscripcion,negativo
+¿Cuál es el precio del programa? Soy de Quito,inscripcion,neutral
+"Quiero inscribirme ya mismo, ¿cómo hago?",inscripcion,positivo
+¿Puedo pagar en cuotas? Me llamo Carlos Mendoza,inscripcion,neutral
+¿Cuándo arranca el próximo grupo?,inscripcion,neutral
+Me cobraron dos veces la matrícula y estoy muy molesta,inscripcion,negativo
+¿Me pasan el WhatsApp de un asesor? Soy Diana Torres de Cali,contacto,neutral
+¿A qué correo les escribo?,contacto,neutral
+¿En qué horario atienden en Colombia?,contacto,neutral
+"Llamé al número y nadie contestó, es la tercera vez",contacto,negativo
+¿Tienen Instagram o LinkedIn?,contacto,neutral
+¿Qué carreras tienen para aprender Java?,programas,neutral
+"Me interesa la ruta de Python AI Engineer, ¿cuánto dura?",programas,positivo
+¿Los certificados son válidos fuera del país? Soy Mateo Silva de Montevideo,programas,neutral
+¿Me ayudan a conseguir trabajo cuando termine?,programas,neutral
+¿Enseñan inglés técnico también?,programas,neutral
+"No sé si elegir JavaScript o Python, estoy perdido",programas,neutral
+¿Qué es DevSenior Code exactamente?,empresa,neutral
+¿Dónde queda la sede de DevSenior?,empresa,neutral
+¿Las clases son en vivo o grabadas?,empresa,neutral
+"Trabajo en Bancolombia y queremos capacitar al equipo de datos, ¿hacen cursos para empresas?",empresa,positivo
+¿Quiénes son los profesores? Ojalá no sean solo videos,empresa,neutral
+"Me encantó la metodología, mis amigos hablan muy bien de DevSenior",empresa,positivo
+¿Ustedes también desarrollan software a la medida?,empresa,neutral
+¿Eres un robot o una persona?,asistente,neutral
+¿Cómo te llamas?,asistente,neutral
+"Respondes muy bien, ¿quién te programó?",asistente,positivo
+¿Qué cosas me puedes responder?,asistente,neutral
+Hola!,saludo,neutral
+"Buenas noches, Devi",saludo,neutral
+"Muchas gracias por la ayuda, eres genial",saludo,positivo
+"Chao, hasta mañana",saludo,neutral
