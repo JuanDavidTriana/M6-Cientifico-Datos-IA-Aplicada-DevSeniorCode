@@ -30,7 +30,3 @@ Unidad 2/clase_04_nlp_aplicado_huggingface/
 
 # Clases que aun no se han dado (quitar la linea cuando se dicte la clase)
 # Clase 3: solo se sube lo de estudiantes (requirements, notebook vacio y datasets)
-Unidad 2/clase_03_ia_generativa_prompt_engineering/*
-!Unidad 2/clase_03_ia_generativa_prompt_engineering/requirements.txt
-!Unidad 2/clase_03_ia_generativa_prompt_engineering/notebooks_estudiantes/
-!Unidad 2/clase_03_ia_generativa_prompt_engineering/datasets/devsenior_conocimiento.jsonl
