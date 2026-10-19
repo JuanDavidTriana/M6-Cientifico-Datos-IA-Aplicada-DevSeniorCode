@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Transformers y MiniGPT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Figtree:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: guía de clase en una sola columna con riel de navegación fijo; cada sección = un bloque del notebook con su demo viva */
+:root{
+  --bg:#130A1E; --surface:#1D1030; --surface-2:#28163F; --line:#3A2356;
+  --fg:#F4EEFB; --muted:#B3A2C9; --dim:#7D6B95;
+  --violet:#9B4DFF; --violet-deep:#6A0DAD; --magenta:#E040E0; --lilac:#C9A8EC; --mint:#5EE6B5; --amber:#FFC46B;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:var(--lilac)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h2{font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:600;letter-spacing:-.01em}
+h3{font-size:1.05rem;font-weight:600;letter-spacing:.01em}
+p{margin:0}
+code,.mono{font-family:var(--mono);font-size:.9em}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--magenta);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1080px;margin:0 auto}
+
+/* ---------- barra superior ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.topbar .wrap{display:flex;align-items:center;gap:14px;padding:10px max(16px,env(safe-area-inset-left,0px));flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:800;font-size:.95rem;letter-spacing:.02em;white-space:nowrap}
+.brand span{color:var(--magenta)}
+.navdots{display:flex;gap:6px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.navdots a{font-size:.72rem;font-family:var(--mono);color:var(--muted);text-decoration:none;padding:4px 9px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.navdots a.on{color:var(--fg);border-color:var(--violet);background:color-mix(in srgb,var(--violet) 18%,transparent)}
+.clock{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.clock b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--line);background:var(--surface-2);color:var(--fg);padding:7px 14px;border-radius:10px;font-size:.88rem;transition:border-color .2s,background .2s}
+.btn:hover{border-color:var(--violet)}
+.btn.primary{background:var(--violet-deep);border-color:var(--violet)}
+.btn.primary:hover{background:var(--violet)}
+.btn.sm{padding:4px 10px;font-size:.78rem}
+.btn[aria-pressed="true"]{background:color-mix(in srgb,var(--magenta) 30%,var(--surface-2));border-color:var(--magenta)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding-block:56px 40px}
+#net{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.9}
+.hero .wrap{position:relative;z-index:1}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--lilac)}
+.hero h1{font-size:clamp(2.2rem,6.4vw,4.6rem);font-weight:800;letter-spacing:-.02em;margin-top:14px;max-width:12ch}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--violet),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{max-width:56ch;color:var(--muted);font-size:1.12rem;margin-top:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{font-family:var(--mono);font-size:.76rem;padding:5px 11px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--lilac)}
+
+/* agenda */
+.agenda{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:34px}
+.slot{display:block;text-decoration:none;color:inherit;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:14px;padding:12px 14px;transition:border-color .25s,transform .25s}
+.slot:hover{border-color:var(--violet);transform:translateY(-2px)}
+.slot .t{font-family:var(--mono);font-size:.72rem;color:var(--dim);font-variant-numeric:tabular-nums}
+.slot .n{font-weight:700;font-size:.95rem;margin-top:3px;line-height:1.3}
+.slot.now{border-color:var(--magenta);box-shadow:0 0 0 1px var(--magenta),0 0 28px -6px var(--magenta)}
+.slot.break{border-style:dashed}
+
+/* ---------- secciones ---------- */
+section.block{padding-block:64px 24px;border-top:1px solid var(--line);scroll-margin-top:60px}
+.head{display:grid;gap:10px;max-width:780px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.time{font-family:var(--mono);font-size:.75rem;color:var(--bg);background:var(--lilac);padding:3px 9px;border-radius:6px;font-weight:600}
+.nb{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.prose{max-width:68ch;color:var(--muted);display:grid;gap:12px}
+.prose b,.prose strong{color:var(--fg)}
+.stage{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;display:grid;gap:18px;min-width:0}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.label{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.caption{font-size:.85rem;color:var(--dim)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px}
+.grid2>*{min-width:0}
+details.note{border:1px dashed color-mix(in srgb,var(--amber) 55%,transparent);border-radius:14px;padding:12px 16px;margin-top:22px;max-width:780px;background:color-mix(in srgb,var(--amber) 6%,transparent)}
+details.note summary{cursor:pointer;font-weight:700;color:var(--amber);font-size:.9rem}
+details.note div{color:var(--muted);margin-top:10px;display:grid;gap:8px;font-size:.95rem}
+.formula{font-family:var(--mono);font-size:clamp(.9rem,2.2vw,1.15rem);padding:14px 16px;border-radius:12px;background:var(--surface-2);overflow-x:auto;white-space:nowrap}
+.formula span{padding:2px 4px;border-radius:5px;transition:background .3s,color .3s}
+.formula span.hl{background:var(--magenta);color:#fff}
+input[type=range]{accent-color:var(--magenta);width:160px}
+input[type=text]{background:var(--surface-2);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:9px 12px;font:inherit;width:100%;min-width:0}
+.scroll-x{overflow-x:auto}
+
+/* rnn vs transformer */
+#seqsvg{width:100%;height:auto;display:block}
+
+/* tokens */
+.toks{display:flex;flex-wrap:wrap;gap:6px;min-height:44px;align-items:flex-start}
+.tok{font-family:var(--mono);font-size:.9rem;padding:5px 8px;border-radius:8px;border:1px solid transparent;white-space:pre;animation:pop .35s ease both}
+@keyframes pop{from{transform:scale(.7);opacity:.2}to{transform:none;opacity:1}}
+.stats{display:flex;gap:22px;flex-wrap:wrap}
+.stat b{display:block;font-family:var(--display);font-size:1.7rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.78rem;color:var(--dim);font-family:var(--mono)}
+
+/* atención */
+#attsvg{width:100%;height:auto;display:block;overflow:visible}
+.mats{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.mat{display:grid;gap:6px}
+.mat table{border-collapse:separate;border-spacing:3px;font-family:var(--mono);font-size:.74rem;font-variant-numeric:tabular-nums}
+.mat td{min-width:44px;height:30px;text-align:center;border-radius:6px;padding:0 4px;transition:background .4s}
+.mat th{font-weight:400;color:var(--dim);font-size:.7rem;padding:0 4px;text-align:right}
+.mat thead th{text-align:center}
+.mat.dim{opacity:.25;filter:saturate(.3)}
+.mat{transition:opacity .4s}
+.heads{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.head-card{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;text-align:left;color:inherit}
+.head-card[aria-pressed="true"]{border-color:var(--magenta)}
+.head-card canvas{width:100%;aspect-ratio:1;display:block;border-radius:8px;image-rendering:pixelated}
+.head-card p{font-size:.82rem;color:var(--muted);margin-top:6px}
+
+/* bloque */
+#blocksvg{width:100%;height:auto;display:block}
+.bars{display:grid;gap:12px}
+.bar{display:grid;grid-template-columns:minmax(120px,190px) 1fr auto;gap:12px;align-items:center;font-size:.9rem}
+.bar .track{height:14px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--violet-deep),var(--magenta));width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.bar .v{font-family:var(--mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* bert gpt */
+#bgsvg{width:100%;height:auto;display:block}
+
+/* generación */
+.probs{display:grid;gap:7px}
+.prob{display:grid;grid-template-columns:minmax(90px,140px) 1fr 54px;gap:10px;align-items:center;font-family:var(--mono);font-size:.85rem}
+.prob .track{height:18px;border-radius:6px;background:var(--surface-2);overflow:hidden}
+.prob .fill{height:100%;background:var(--violet);border-radius:6px;transition:width .35s ease,background .35s}
+.prob.cut{opacity:.32}
+.prob.pick .fill{background:var(--magenta)}
+.prob .p{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.gen{font-size:1.25rem;line-height:1.7;padding:14px 16px;background:var(--surface-2);border-radius:12px;min-height:64px}
+.gen .new{color:var(--magenta);animation:pop .4s ease both}
+.ctl{display:grid;gap:4px}
+.ctl output{font-family:var(--mono);color:var(--fg);font-size:.85rem}
+
+/* sft */
+.chat{display:grid;gap:10px}
+.bubble{max-width:min(520px,92%);padding:10px 14px;border-radius:14px;font-size:.95rem}
+.bubble.u{justify-self:end;background:var(--violet-deep)}
+.bubble.b{background:var(--surface-2);border:1px solid var(--line)}
+.bubble.bad{border-color:#8a3b4d}
+.bubble small{display:block;font-family:var(--mono);font-size:.68rem;color:var(--lilac);margin-bottom:3px}
+.masked{display:flex;flex-wrap:wrap;gap:4px}
+.masked .tok{animation:none}
+.layers{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.layer{height:46px;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:.68rem;transition:background .3s,color .3s}
+.layer.frozen{background:var(--surface-2);color:var(--dim);border:1px dashed var(--line)}
+.layer.train{background:linear-gradient(180deg,var(--violet),var(--magenta));color:#fff}
+#losssvg{width:100%;height:auto;display:block}
+
+/* quiz */
+.quiz{display:grid;gap:16px}
+.q{background:var(--surface-2);border-radius:14px;padding:16px;display:grid;gap:10px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:7px 12px;border-radius:10px;font-size:.9rem;text-align:left}
+.opt.ok{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 18%,var(--surface))}
+.opt.no{border-color:#c0506b;background:color-mix(in srgb,#c0506b 18%,var(--surface))}
+.fb{font-size:.88rem;color:var(--muted)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px}
+.sum{background:var(--surface-2);border-radius:14px;padding:14px;display:grid;gap:6px}
+.sum b{font-family:var(--display);font-size:.9rem}
+.sum p{font-size:.88rem;color:var(--muted)}
+footer{padding-block:40px 60px;color:var(--dim);font-size:.85rem;border-top:1px solid var(--line);margin-top:40px}
+.kbd{font-family:var(--mono);font-size:.75rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--muted)}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .clock .lbl{display:none}
+  .stage{padding:16px}
+  .bar{grid-template-columns:1fr auto}
+  .bar .track{grid-column:1/-1;grid-row:2}
+  .layers{grid-template-columns:repeat(6,1fr)}
+}
+@media (max-width:640px){ #net{opacity:.35} }
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">dev<span>✓</span> MiniGPT · C2</div>
+    <nav class="navdots" id="navdots" aria-label="Secciones"></nav>
+    <div class="clock" title="Reloj de la clase (3 h)">
+      <span class="lbl">Clase</span><b id="clockTxt">0:00:00</b>
+      <button class="btn sm" id="clockBtn" type="button">Iniciar</button>
+      <button class="btn sm" id="clockReset" type="button" aria-label="Reiniciar reloj">↺</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="inicio" data-nav="Inicio">
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="eyebrow">Unidad 2 · NLP e IA Generativa · Clase 02</div>
+    <h1>Transformers y <em>MiniGPT</em></h1>
+    <p class="lead">Hoy abrimos la caja negra de ChatGPT: un Transformer que predice el siguiente token. Cada pieza la construimos en pequeño y al final entrenamos nuestro propio chatbot en español.</p>
+    <div class="chips">
+      <span class="chip">3 horas en vivo</span><span class="chip">PyTorch + 🤗 transformers</span><span class="chip">GPT-2 small español · 124 M</span><span class="chip">corre en CPU</span>
+    </div>
+    <nav class="agenda" id="agenda" aria-label="Agenda de la clase"></nav>
+    <p class="caption" style="margin-top:14px">Usa <span class="kbd">←</span> <span class="kbd">→</span> para saltar entre bloques. El reloj de arriba marca el bloque en el que deberías ir.</p>
+  </div>
+</section>
+
+<div class="wrap">
+
+<!-- ================= 0 INTRO ================= -->
+<section class="block" id="intro" data-nav="Intro">
+  <div class="head">
+    <div class="meta"><span class="time">0:00 – 0:15</span><span class="nb">Notebook · Introducción</span></div>
+    <h2>¿Por qué los Transformers reemplazaron a las RNN?</h2>
+  </div>
+  <div class="prose" style="margin-top:16px">
+    <p>Una <b>RNN</b> lee palabra por palabra, en orden: no se puede paralelizar y la información del inicio se va diluyendo. Un <b>Transformer</b> (Google, 2017) deja que <b>cada palabra mire directamente a todas las demás</b> en un solo paso: eso es la <b>atención</b>.</p>
+  </div>
+  <div class="stage">
+    <div class="controls">
+      <span class="label">Modo</span>
+      <button class="btn" id="btnRNN" type="button" aria-pressed="true">RNN (secuencial)</button>
+      <button class="btn" id="btnTRF" type="button" aria-pressed="false">Transformer (atención)</button>
+    </div>
+    <svg id="seqsvg" viewBox="0 0 900 260" role="img" aria-label="Comparación animada entre RNN y Transformer"></svg>
+    <p class="caption" id="seqCap">RNN: el mensaje viaja de un token al siguiente y se va apagando. Para llegar a "hambre" hay que pasar por todos.</p>
+  </div>
+  <details class="note"><summary>Nota docente · línea de tiempo</summary><div>
+    <p>2017 Transformer → 2018 BERT y GPT-1 → 2019 GPT-2 (el de hoy, versión pequeña en español) → 2020 GPT-3 → 2022 ChatGPT → hoy Llama, Qwen, Claude…</p>
+    <p>Mensaje clave: un LLM es, en el fondo, <b>un Transformer decoder que predice el siguiente token</b>, entrenado a gran escala y luego ajustado para conversar.</p>
+  </div></details>
+</section>
+
+<!-- ================= 1 TOKENS ================= -->
+<section class="block" id="tokens" data-nav="1 · Tokens">
+  <div class="head">
+    <div class="meta"><span class="time">0:15 – 0:35</span><span class="nb">Notebook §1 · celdas 1.1–1.2</span></div>
+    <h2>Tokenización BPE: cómo "lee" un GPT</h2>
+  </div>
+  <div class="prose" style="margin-top:16px">
+    <p><b>BPE</b> empieza con letras sueltas y va <b>fusionando los pares más frecuentes</b> del corpus. Las palabras comunes terminan siendo 1 token; las raras se parten en varios. Nunca hay palabras desconocidas.</p>
+    <p>Esta demo <b>entrena un BPE de verdad en tu navegador</b> con los 93 diálogos del dataset de MiniGPT. Mueve el número de fusiones y mira cómo cambian los tokens.</p>
+  </div>
+  <div class="stage">
+    <label class="label" for="bpeInput">Escribe una frase</label>
+    <input type="text" id="bpeInput" value="Los transformers revolucionaron el procesamiento de lenguaje natural">
+    <div class="controls">
+      <span class="label">Fusiones aprendidas</span>
+      <input type="range" id="bpeMerges" min="0" max="600" value="250" aria-label="Número de fusiones BPE">
+      <output id="bpeMergesOut" class="mono">250</output>
+      <button class="btn primary" id="bpePlay" type="button">▶ Animar entrenamiento</button>
+    </div>
+    <div class="toks" id="bpeToks" aria-live="polite"></div>
+    <div class="stats">
+      <div class="stat"><b id="stWords">0</b><span>palabras</span></div>
+      <div class="stat"><b id="stToks">0</b><span>tokens</span></div>
+      <div class="stat"><b id="stRatio">0</b><span>tokens / palabra</span></div>
+      <div class="stat"><b id="stVocab">0</b><span>vocabulario</span></div>
+    </div>
+    <p class="caption">"▁" marca un espacio antes del token (GPT-2 usa "Ġ"). Última fusión: <span class="mono" id="bpeLast">—</span></p>
+  </div>
+  <details class="note"><summary>Nota docente · consecuencias prácticas</summary><div>
+    <p>Los LLMs cobran y limitan la memoria <b>en tokens</b> (en español ≈ 1,3–1,6 tokens por palabra).</p>
+    <p>Por eso les cuesta contar letras ("¿cuántas r tiene <i>ferrocarril</i>?"): nunca ven letras, ven tokens. Pide a un estudiante que escriba "desoxirribonucleico" con 0 y con 600 fusiones.</p>
+  </div></details>
+</section>
+
+<!-- ================= 2 ATENCIÓN ================= -->
+<section class="block" id="atencion" data-nav="2 · Atención">
+  <div class="head">
+    <div class="meta"><span class="time">0:35 – 1:15</span><span class="nb">Notebook §2 · celdas 2.1–2.6</span></div>
+    <h2>Self-attention: cada token mira a los demás</h2>
+  </div>
+  <div class="prose" style="margin-top:16px">
+    <p>"Me senté en el <b>banco</b> del parque" y "el <b>banco</b> me cobró comisión": la misma palabra necesita significados distintos según el contexto. La atención permite que cada token <b>mezcle información</b> de los tokens relevantes.</p>
+    <p><b>Toca una palabra</b> para ver a quién le presta atención. El grosor del arco es el peso.</p>
+  </div>
+  <div class="stage">
+    <div class="controls">
+      <button class="btn" id="attCausal" type="button" aria-pressed="false">Máscara causal (GPT)</button>
+      <span class="caption" id="attHint">Sin máscara: estilo BERT, todos ven a todos.</span>
+    </div>
+    <svg id="attsvg" viewBox="0 60 900 240" role="img" aria-label="Arcos de atención entre palabras"></svg>
+    <p class="caption">Pesos ilustrativos, parecidos a los de una cabeza entrenada (en el notebook verás los reales de GPT-2).</p>
+  </div>
+
+  <h3 style="margin-top:40px">La fórmula, paso a paso (cálculo real)</h3>
+  <div class="stage">
+    <div class="formula" id="formula"><span data-s="0">Attention(Q,K,V)</span> = <span data-s="3">softmax</span>( <span data-s="1">Q·Kᵀ</span> <span data-s="2">/ √d<sub>k</sub></span> ) <span data-s="4">· V</span></div>
+    <div class="controls">
+      <button class="btn" id="qkvPrev" type="button">← Anterior</button>
+      <button class="btn primary" id="qkvNext" type="button">Siguiente paso →</button>
+      <button class="btn" id="qkvCausal" type="button" aria-pressed="false">Máscara causal</button>
+      <button class="btn" id="qkvScale" type="button" aria-pressed="true">Escalar por √d<sub>k</sub></button>
+      <button class="btn" id="qkvShuffle" type="button">🎲 Nuevos pesos</button>
+    </div>
+    <p id="qkvText" class="prose" style="max-width:none"></p>
+    <div class="scroll-x"><div class="mats" id="mats"></div></div>
+  </div>
+
+  <h3 style="margin-top:40px">Multi-cabeza: cada cabeza aprende una relación distinta</h3>
+  <div class="stage">
+    <div class="heads" id="heads"></div>
+    <p class="caption">Patrones típicos que aparecen al entrenar GPT-2. Nadie los programó: emergen del entrenamiento.</p>
+  </div>
+
+  <h3 style="margin-top:40px">El bloque Transformer</h3>
+  <div class="stage grid2">
+    <svg id="blocksvg" viewBox="0 0 420 470" role="img" aria-label="Diagrama animado de un bloque Transformer"></svg>
+    <div style="display:grid;gap:14px;align-content:start">
+      <p class="prose" style="max-width:none">La <b>atención mezcla</b> información entre tokens; el <b>MLP procesa</b> cada token por separado. Las <b>conexiones residuales</b> (el atajo +) dejan apilar decenas de bloques sin que el gradiente se pierda.</p>
+      <span class="label">Tamaño (escala logarítmica)</span>
+      <div class="bars" id="bars"></div>
+      <p class="caption">MiniTransformer con el vocabulario de GPT-2 (50.257 tokens): la mayoría de sus parámetros son embeddings.</p>
+    </div>
+  </div>
+  <details class="note"><summary>Nota docente · por qué dividir entre √d<sub>k</sub></summary><div>
+    <p>Con d<sub>k</sub> grande, el producto Q·K tiene varianza ≈ d<sub>k</sub> → el softmax se satura (un token se lleva casi todo el peso) y los gradientes se desvanecen. Usa el botón "Escalar por √d<sub>k</sub>" en la fórmula para mostrarlo: sin escalar, la matriz de pesos se vuelve casi one-hot.</p>
+    <p>Si vas atrasado, la parte de multi-cabeza se puede mostrar sin escribir el código.</p>
+  </div></details>
+</section>
+
+<!-- ================= 3 GPT-2 real ================= -->
+<section class="block" id="gpt2" data-nav="3 · GPT-2">
+  <div class="head">
+    <div class="meta"><span class="time">1:15 – 1:30</span><span class="nb">Notebook §3 · celdas 3.1–3.2</span></div>
+    <h2>Dentro de GPT-2: 12 bloques, 12 cabezas</h2>
+  </div>
+  <div class="prose" style="margin-top:16px">
+    <p>Ejecuta la sección 3 del notebook y proyecta los mapas reales. Qué señalar:</p>
+    <p>• Todos los mapas son <b>triangulares</b>: GPT-2 usa máscara causal, como la nuestra.<br>• Muchas cabezas miran al <b>primer token</b> ("lugar de descanso").<br>• Algunas miran al <b>token anterior</b>; otras conectan "tenía" con "perro" o "gato".</p>
+  </div>
+  <div class="stage" style="text-align:center;padding:30px">
+    <p style="font-family:var(--display);font-size:1.4rem">☕ Pausa · 10 minutos</p>
+    <p class="caption">1:30 – 1:40</p>
+  </div>
+</section>
+
+<!-- ================= 4 BERT vs GPT ================= -->
+<section class="block" id="bertgpt" data-nav="4 · BERT/GPT">
+  <div class="head">
+    <div class="meta"><span class="time">1:40 – 2:00</span><span class="nb">Notebook §4 · celdas 4.1–4.2</span></div>
+    <h2>Encoder (BERT) vs Decoder (GPT)</h2>
+  </div>
+  <div class="prose" style="margin-top:16px">
+    <p><b>BERT</b> ve la frase completa y adivina la palabra tapada: sirve para <b>entender</b>. <b>GPT</b> solo ve lo anterior y predice lo siguiente: sirve para <b>generar</b>.</p>
+  </div>
+  <div class="stage">
+    <div class="controls">
+      <button class="btn" id="bgBert" type="button" aria-pressed="true">BERT · rellenar [MASK]</button>
+      <button class="btn" id="bgGpt" type="button" aria-pressed="false">GPT · continuar</button>
+    </div>
+    <svg id="bgsvg" viewBox="0 0 900 230" role="img" aria-label="Flujo de información en BERT y GPT"></svg>
+    <p class="caption" id="bgCap"></p>
+  </div>
+</section>
+
+<!-- ================= 5 GENERACIÓN ================= -->
+<section class="block" id="generar" data-nav="5 · Generar">
+  <div class="head">
+    <div class="meta"><span class="time">2:00 – 2:25</span><span class="nb">Notebook §5 · celdas 5.1–5.5</span></div>
+    <h2>Cómo genera texto un GPT</h2>
+  </div>
+  <div class="prose" style="margin-top:16px">
+    <p>El modelo da una <b>probabilidad para cada token posible</b>. Elegimos uno, lo pegamos al texto y repetimos. Tres perillas controlan la elección: <b>temperatura</b>, <b>top-k</b> y <b>top-p</b>.</p>
+    <p>Aquí el "modelo" es un modelo de bigramas entrenado en tu navegador con el corpus de MiniGPT: mucho más simple que GPT-2, pero <b>el muestreo es exactamente el mismo</b> que programamos en la celda 5.3.</p>
+  </div>
+  <div class="stage">
+    <div class="gen" id="genText" aria-live="polite"></div>
+    <div class="controls">
+      <button class="btn primary" id="genStep" type="button">Elegir siguiente token</button>
+      <button class="btn" id="genAuto" type="button">▶ Generar 12</button>
+      <button class="btn" id="genReset" type="button">Reiniciar</button>
+    </div>
+    <div class="grid2">
+      <div style="display:grid;gap:14px;align-content:start">
+        <div class="ctl"><label class="label" for="temp">Temperatura</label><input type="range" id="temp" min="0.1" max="2" step="0.1" value="1"><output id="tempOut">1.0</output></div>
+        <div class="ctl"><label class="label" for="topk">Top-k (0 = sin límite)</label><input type="range" id="topk" min="0" max="10" step="1" value="0"><output id="topkOut">0</output></div>
+        <div class="ctl"><label class="label" for="topp">Top-p</label><input type="range" id="topp" min="0.1" max="1" step="0.05" value="1"><output id="toppOut">1.00</output></div>
+        <button class="btn" id="greedy" type="button" aria-pressed="false">Greedy (siempre el más probable)</button>
+      </div>
+      <div style="min-width:0">
+        <span class="label" id="probsTitle">Siguiente token</span>
+        <div class="probs" id="probs" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+  <details class="note"><summary>Nota docente · valores típicos</summary><div>
+    <p>Chat general T≈0.7, top-p≈0.9 · código o datos T≈0–0.3 · escritura creativa T≈1.0.</p>
+    <p>Prueba en vivo: greedy entra en bucles ("es es es…"); temperatura 2 produce texto caótico. Es la misma conclusión que verás con GPT-2 en la celda 5.3.</p>
+  </div></details>
+</section>
+
+<!-- ================= 6 MINIGPT ================= -->
+<section class="block" id="minigpt" data-nav="6 · MiniGPT">
+  <div class="head">
+    <div class="meta"><span class="time">2:25 – 2:55</span><span class="nb">Notebook §6 · celdas 6.1–6.10</span></div>
+    <h2>MiniGPT: de modelo base a chatbot</h2>
+  </div>
+  <div class="prose" style="margin-top:16px">
+    <p>GPT-2 aprendió a continuar Wikipedia, no a conversar. Con <b>fine-tuning supervisado (SFT)</b> le mostramos 93 diálogos con un formato fijo. Es el mismo paso que convirtió GPT-3 en ChatGPT, pero con millones de ejemplos.</p>
+  </div>
+  <div class="stage grid2">
+    <div class="chat">
+      <span class="label">Antes vs después (respuestas de ejemplo)</span>
+      <div class="bubble u">¿Cómo te llamas?</div>
+      <div class="bubble b bad"><small>GPT-2 base</small>_PLAT_AUON y ## Usuarios: Un intérprete de tipo Unix con el sistema mp3…</div>
+      <div class="bubble b"><small>MiniGPT tras el SFT</small>Me llamo MiniGPT. Soy un modelo de lenguaje pequeño basado en GPT-2.</div>
+      <p class="caption">La respuesta "base" es la que dio GPT-2 en tu primer notebook. Las de MiniGPT variarán en cada entrenamiento.</p>
+    </div>
+    <div style="display:grid;gap:12px;align-content:start;min-width:0">
+      <span class="label">El truco del SFT: la pérdida solo cuenta en la respuesta</span>
+      <div class="masked" id="masked"></div>
+      <p class="caption"><span style="color:var(--dim)">■</span> labels = −100 (se ignora) · <span style="color:var(--magenta)">■</span> lo que el modelo aprende</p>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="controls">
+      <label class="label" for="frozen">Bloques congelados</label>
+      <input type="range" id="frozen" min="0" max="12" value="6">
+      <output id="frozenOut" class="mono">6 / 12</output>
+    </div>
+    <div class="layers" id="layers"></div>
+    <div class="stats">
+      <div class="stat"><b id="trainP">0</b><span>parámetros entrenables</span></div>
+      <div class="stat"><b id="trainPct">0</b><span>del modelo (124,4 M)</span></div>
+    </div>
+    <p class="caption">Cálculo exacto para GPT-2 small: cada bloque tiene 7.087.872 parámetros; los embeddings (39,4 M) también se congelan si hay al menos un bloque congelado, como en la celda 6.5.</p>
+  </div>
+  <div class="stage">
+    <div class="controls"><span class="label">Curva de pérdida</span><button class="btn" id="lossPlay" type="button">▶ Simular entrenamiento</button></div>
+    <svg id="losssvg" viewBox="0 0 640 220" role="img" aria-label="Curva de pérdida de entrenamiento y validación"></svg>
+    <p class="caption">Curva ilustrativa con la forma típica: train baja mucho y validación se estanca (memoriza con solo 85 ejemplos → buen momento para hablar de overfitting).</p>
+  </div>
+  <details class="note"><summary>Nota docente · mientras entrena</summary><div>
+    <p>El fine-tuning tarda ~3–6 min en CPU: lánzalo y explica la máscara de labels con la demo de arriba.</p>
+    <p>"¿Por qué responde mal la capital de Francia?" → el SFT enseña <b>formato y estilo</b>, no conocimiento nuevo. El conocimiento viene del preentrenamiento.</p>
+  </div></details>
+</section>
+
+<!-- ================= CIERRE ================= -->
+<section class="block" id="cierre" data-nav="Cierre">
+  <div class="head">
+    <div class="meta"><span class="time">2:55 – 3:00</span><span class="nb">Notebook · Cierre y reto</span></div>
+    <h2>Lo que construimos hoy</h2>
+  </div>
+  <div class="summary" style="margin-top:24px">
+    <div class="sum"><b>Tokens</b><p>Los LLMs leen subpalabras (BPE), no palabras ni letras.</p></div>
+    <div class="sum"><b>Atención</b><p>Q·K·V + softmax: cada token mezcla información de los relevantes.</p></div>
+    <div class="sum"><b>BERT vs GPT</b><p>Entender (bidireccional) vs generar (causal).</p></div>
+    <div class="sum"><b>Generar</b><p>Siguiente token + temperatura, top-k y top-p.</p></div>
+    <div class="sum"><b>MiniGPT</b><p>SFT con 93 diálogos: sigue el formato de chat, pero sabe poco.</p></div>
+  </div>
+  <h3 style="margin-top:36px">Quiz rápido</h3>
+  <div class="quiz" id="quiz" style="margin-top:14px"></div>
+  <div class="stage">
+    <span class="label">Próxima clase</span>
+    <p class="prose" style="max-width:none">MiniGPT sabe poco y no recuerda la conversación. En la Clase 3 le cambiamos el cerebro por un LLM instruct (<b>Qwen3</b>) y lo controlamos con <b>prompt engineering</b>, memoria y streaming.</p>
+  </div>
+</section>
+
+<footer>Máster en IA · DevSenior Code · Módulo Científico de Datos e IA Aplicada · Unidad 2, Clase 2. Material de apoyo para el notebook <span class="mono">Clase02_Transformers_MiniGPT_DOCENTE.ipynb</span>.</footer>
+</div>
+
+<script>
+(() => {
+"use strict";
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = s => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const svgEl = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const C = { violet: css("--violet"), magenta: css("--magenta"), lilac: css("--lilac"), line: css("--line"), fg: css("--fg"), muted: css("--muted"), dim: css("--dim"), surface2: css("--surface-2"), mint: css("--mint"), bg: css("--bg") };
+const fmt = n => n.toLocaleString("es-CO");
+function rng(seed){ let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
+
+/* ================= AGENDA, NAV, RELOJ ================= */
+const AGENDA = [
+  {id:"intro", t:"0:00", a:0, b:15, n:"Intro: de RNN a Transformers"},
+  {id:"tokens", t:"0:15", a:15, b:35, n:"1 · Tokenización BPE"},
+  {id:"atencion", t:"0:35", a:35, b:75, n:"2 · Self-attention desde cero"},
+  {id:"gpt2", t:"1:15", a:75, b:90, n:"3 · Dentro de GPT-2"},
+  {id:"gpt2", t:"1:30", a:90, b:100, n:"☕ Pausa", br:true},
+  {id:"bertgpt", t:"1:40", a:100, b:120, n:"4 · BERT vs GPT"},
+  {id:"generar", t:"2:00", a:120, b:145, n:"5 · Generación y sampling"},
+  {id:"minigpt", t:"2:25", a:145, b:175, n:"6 · MiniGPT: fine-tuning"},
+  {id:"cierre", t:"2:55", a:175, b:180, n:"Cierre y reto"},
+];
+const ag = $("#agenda");
+AGENDA.forEach((s,i) => { const a = document.createElement("a"); a.href = "#" + s.id; a.className = "slot" + (s.br ? " break" : ""); a.dataset.i = i; a.innerHTML = `<div class="t">${s.t}</div><div class="n">${s.n}</div>`; ag.appendChild(a); });
+
+const sections = [...document.querySelectorAll("[data-nav]")];
+const nav = $("#navdots");
+sections.forEach(s => { const a = document.createElement("a"); a.href = "#" + s.id; a.textContent = s.dataset.nav; nav.appendChild(a); });
+const navLinks = [...nav.children];
+const io = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) { navLinks.forEach(l => l.classList.toggle("on", l.getAttribute("href") === "#" + e.target.id)); const on = nav.querySelector(".on"); if (on) nav.scrollLeft = on.offsetLeft - nav.clientWidth/2 + on.offsetWidth/2; } }); }, {rootMargin:"-45% 0px -50% 0px"});
+sections.forEach(s => io.observe(s));
+addEventListener("keydown", e => {
+  if (e.target.matches("input,textarea") || (e.key !== "ArrowRight" && e.key !== "ArrowLeft")) return;
+  let cur = 0; sections.forEach((s,i) => { if (s.getBoundingClientRect().top <= 120) cur = i; });
+  const next = e.key === "ArrowRight" ? Math.min(cur + 1, sections.length - 1) : Math.max(cur - 1, 0);
+  sections[next].scrollIntoView({behavior: REDUCED ? "auto" : "smooth"}); e.preventDefault();
+});
+let clockStart = Number(store.get("c2clockStart")) || 0, clockPaused = Number(store.get("c2clockPaused")) || 0;
+const clockTxt = $("#clockTxt"), clockBtn = $("#clockBtn");
+function elapsed(){ if (!clockStart) return clockPaused; return Date.now() - clockStart; }
+function paintClock(){
+  const ms = elapsed(), s = Math.floor(ms / 1000);
+  clockTxt.textContent = `${Math.floor(s/3600)}:${String(Math.floor(s/60)%60).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+  clockBtn.textContent = clockStart ? "Pausar" : (ms ? "Seguir" : "Iniciar");
+  const m = ms / 60000;
+  [...ag.children].forEach((el,i) => el.classList.toggle("now", (clockStart || ms) && m >= AGENDA[i].a && m < AGENDA[i].b));
+}
+clockBtn.onclick = () => { if (clockStart) { clockPaused = Date.now() - clockStart; clockStart = 0; store.set("c2clockPaused", clockPaused); store.del("c2clockStart"); } else { clockStart = Date.now() - clockPaused; store.set("c2clockStart", clockStart); } paintClock(); };
+$("#clockReset").onclick = () => { clockStart = 0; clockPaused = 0; store.del("c2clockStart"); store.del("c2clockPaused"); paintClock(); };
+setInterval(paintClock, 1000); paintClock();
+
+/* ================= HERO: red de neuronas con pulsos ================= */
+(function hero(){
+  const cv = $("#net"), ctx = cv.getContext("2d"); let W, H, nodes = [], edges = [], pulses = [], dpr;
+  function build(){
+    dpr = Math.min(devicePixelRatio || 1, 2); const r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    nodes = []; edges = [];
+    const layers = W < 640 ? [4,5,4] : [5,7,7,5]; const x0 = W < 640 ? W * .08 : W * .54, x1 = W * .96;
+    layers.forEach((n,li) => { for (let i=0;i<n;i++) nodes.push({x: x0 + (x1-x0) * li/(layers.length-1), y: H*.12 + (H*.76) * (i+.5)/n, l: li, ph: Math.random()*6.28}); });
+    for (const a of nodes) for (const b of nodes) if (b.l === a.l + 1) edges.push({a,b,w: Math.random()});
+  }
+  function frame(t){
+    ctx.clearRect(0,0,W,H);
+    for (const e of edges){ ctx.strokeStyle = `rgba(155,77,255,${.07 + e.w*.12})`; ctx.lineWidth = .6 + e.w; ctx.beginPath(); ctx.moveTo(e.a.x,e.a.y); ctx.lineTo(e.b.x,e.b.y); ctx.stroke(); }
+    if (!REDUCED && Math.random() < .18 && pulses.length < 40){ const firsts = edges.filter(e => e.a.l === 0); pulses.push({e: firsts[Math.floor(Math.random()*firsts.length)], p:0}); }
+    pulses = pulses.filter(p => { p.p += .018; if (p.p >= 1){ p.e.b.glow = 1; const nexts = edges.filter(e => e.a === p.e.b); if (nexts.length && Math.random() < .8){ p.e = nexts[Math.floor(Math.random()*nexts.length)]; p.p = 0; return true; } return false; }
+      const x = p.e.a.x + (p.e.b.x - p.e.a.x)*p.p, y = p.e.a.y + (p.e.b.y - p.e.a.y)*p.p;
+      const g = ctx.createRadialGradient(x,y,0,x,y,9); g.addColorStop(0,"rgba(224,64,224,.95)"); g.addColorStop(1,"rgba(224,64,224,0)"); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fill(); return true; });
+    for (const n of nodes){ n.glow = (n.glow || 0) * .94; const r = 5 + 2*Math.sin(t/900 + n.ph) * (REDUCED?0:1);
+      ctx.fillStyle = C.bg; ctx.beginPath(); ctx.arc(n.x,n.y,r+3,0,7); ctx.fill();
+      ctx.strokeStyle = `rgba(201,168,236,${.5 + n.glow*.5})`; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(n.x,n.y,r+3,0,7); ctx.stroke();
+      ctx.fillStyle = `rgba(${155+69*n.glow},${77-13*n.glow},${255-31*n.glow},${.55+n.glow*.45})`; ctx.beginPath(); ctx.arc(n.x,n.y,r,0,7); ctx.fill(); }
+    requestAnimationFrame(frame);
+  }
+  build(); addEventListener("resize", build); requestAnimationFrame(frame);
+})();
+
+/* ================= INTRO: RNN vs Transformer ================= */
+(function seq(){
+  const svg = $("#seqsvg"), words = ["El","perro","persiguió","al","gato","porque","tenía","hambre"];
+  const xs = words.map((_,i) => 60 + i * 111), Y = 170; let mode = "rnn", timer;
+  function draw(){
+    svg.innerHTML = ""; clearTimeout(timer);
+    const defs = svgEl("defs",{},svg); const gr = svgEl("linearGradient",{id:"gArc",x1:0,x2:1},defs); svgEl("stop",{offset:"0","stop-color":C.violet},gr); svgEl("stop",{offset:"1","stop-color":C.magenta},gr);
+    const gArcs = svgEl("g",{},svg), gNodes = svgEl("g",{},svg);
+    words.forEach((w,i) => { const g = svgEl("g",{},gNodes); svgEl("rect",{x:xs[i]-48,y:Y-20,width:96,height:40,rx:10,fill:C.surface2,stroke:C.line}, g); const t = svgEl("text",{x:xs[i],y:Y+5,"text-anchor":"middle",fill:C.fg,"font-size":15,"font-family":"Figtree, system-ui, sans-serif"},g); t.textContent = w; g.id = "sw"+i; });
+    if (mode === "rnn"){
+      $("#seqCap").textContent = "RNN: el mensaje viaja de un token al siguiente y se va apagando. Para conectar \"tenía\" con \"perro\" hay que pasar por todos.";
+      for (let i=0;i<words.length-1;i++) svgEl("path",{d:`M${xs[i]+48} ${Y} L${xs[i+1]-48} ${Y}`,stroke:C.line,"stroke-width":2,fill:"none"},gArcs);
+      const dot = svgEl("circle",{r:9,cx:xs[0],cy:Y-40,fill:C.magenta},svg); const mem = svgEl("text",{x:450,y:60,"text-anchor":"middle",fill:C.lilac,"font-size":14,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg);
+      let i = 0; const step = () => { dot.setAttribute("cx", xs[i]); dot.setAttribute("opacity", Math.max(.15, 1 - i*.12)); dot.setAttribute("r", Math.max(3, 9 - i)); mem.textContent = `paso ${i+1}/8 · memoria del inicio: ${Math.round(Math.max(15, 100 - i*12))}%`;
+        svg.querySelectorAll("#sw"+i+" rect").forEach(r => r.setAttribute("stroke", C.magenta)); i++; if (i < words.length) timer = setTimeout(step, REDUCED ? 0 : 650); else timer = setTimeout(draw, 1800); };
+      step();
+    } else {
+      $("#seqCap").textContent = "Transformer: todos los tokens se conectan en un solo paso (en paralelo). \"tenía\" mira directamente a \"perro\" y a \"gato\".";
+      words.forEach((_,i) => words.forEach((_,j) => { if (j <= i) return; const h = 18 + (j-i) * 14; const strong = (i===1 && j===6) || (i===4 && j===6) || (i===6 && j===7);
+        const p = svgEl("path",{d:`M${xs[i]} ${Y-20} C ${xs[i]} ${Y-20-h*1.6}, ${xs[j]} ${Y-20-h*1.6}, ${xs[j]} ${Y-20}`,fill:"none",stroke: strong ? "url(#gArc)" : C.violet,"stroke-width": strong ? 3.5 : 1,opacity: strong ? 1 : .35},gArcs);
+        if (!REDUCED){ const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p.animate([{strokeDashoffset:L},{strokeDashoffset:0}],{duration:900,delay:(i+j)*35,fill:"forwards",easing:"ease-out"}); } }));
+      const t = svgEl("text",{x:450,y:240,"text-anchor":"middle",fill:C.lilac,"font-size":14,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); t.textContent = "1 paso · 28 conexiones calculadas a la vez";
+    }
+  }
+  const b1 = $("#btnRNN"), b2 = $("#btnTRF");
+  b1.onclick = () => { mode = "rnn"; b1.setAttribute("aria-pressed","true"); b2.setAttribute("aria-pressed","false"); draw(); };
+  b2.onclick = () => { mode = "trf"; b2.setAttribute("aria-pressed","true"); b1.setAttribute("aria-pressed","false"); draw(); };
+  draw();
+})();
+
+/* ================= CORPUS compartido ================= */
+const CORPUS = ["¡Hola! Soy MiniGPT, un pequeño asistente creado en la clase de IA. ¿En qué te ayudo?", "¡Buenos días! Soy MiniGPT. ¿Qué quieres aprender hoy?", "¡Buenas noches! Aquí estoy para ayudarte con tus dudas de inteligencia artificial.", "Me llamo MiniGPT. Soy un modelo de lenguaje pequeño basado en GPT-2.", "Mi nombre es MiniGPT.", "Soy MiniGPT, un asistente basado en GPT-2 y ajustado con ejemplos de conversación en español.", "Me crearon los estudiantes del Máster en IA de DevSenior Code durante la clase de Transformers.", "Soy un modelo de lenguaje: predigo la siguiente palabra a partir de las anteriores.", "No. Soy un programa: una red neuronal que genera texto.", "No. Soy MiniGPT, un modelo mucho más pequeño, pero funciono con la misma idea: un Transformer que predice tokens.", "Tengo unos 124 millones de parámetros. Los modelos grandes tienen miles de millones.", "Hablo español, porque mi modelo base fue entrenado con textos en español.", "Puedo responder preguntas cortas sobre inteligencia artificial y conversar un poco.", "¡Muy bien, gracias! Listo para ayudarte.", "¡Con gusto! Si tienes otra pregunta, aquí estoy.", "¡De nada! Fue un placer ayudarte.", "¡Hasta luego! Sigue aprendiendo inteligencia artificial.", "¡Chao! Nos vemos en la próxima clase.", "No tengo reloj ni acceso a internet, así que no puedo saber la hora.", "No tengo acceso a internet, por eso no puedo consultar el clima.", "No. Solo genero texto a partir de patrones que aprendí de los datos.", "No siempre. Puedo equivocarme o inventar datos, por eso conviene verificar mis respuestas.", "Es cuando un modelo de lenguaje inventa información que suena convincente pero es falsa.", "Es el campo que busca que las máquinas realicen tareas que normalmente requieren inteligencia humana.", "La IA es el área de la informática que crea sistemas capaces de aprender, razonar o tomar decisiones.", "Es una rama de la IA en la que los modelos aprenden patrones a partir de datos en lugar de reglas escritas a mano.", "Es lo mismo que machine learning: modelos que aprenden de los datos.", "Es machine learning con redes neuronales de muchas capas.", "La IA es el campo general, el machine learning es una parte de la IA y el deep learning es una parte del machine learning que usa redes profundas.", "Es entrenar un modelo con ejemplos que ya tienen la respuesta correcta, llamada etiqueta.", "Es buscar patrones en datos sin etiquetas, por ejemplo agrupar clientes parecidos.", "Es un conjunto de datos que se usa para entrenar o evaluar un modelo.", "Es cuando el modelo memoriza los datos de entrenamiento y falla con datos nuevos.", "Es el overfitting: el modelo se aprende de memoria el entrenamiento y no generaliza.", "Puedes usar más datos, Dropout, Early Stopping o un modelo más pequeño.", "Es un modelo formado por capas de neuronas artificiales que transforman números para hacer predicciones.", "Es una unidad que multiplica sus entradas por pesos, suma un sesgo y aplica una función de activación.", "Es una función no lineal, como ReLU o Softmax, que permite a la red aprender relaciones complejas.", "ReLU deja pasar los valores positivos y convierte los negativos en cero.", "Convierte un vector de números en probabilidades que suman uno.", "Es el algoritmo que calcula cómo cambiar cada peso para reducir el error de la red.", "Es el método que ajusta los pesos dando pasos pequeños en la dirección que reduce la pérdida.", "Es una medida de qué tan lejos están las predicciones de los valores reales.", "Adam es un optimizador que ajusta la tasa de aprendizaje de cada peso de forma automática.", "Es el tamaño del paso con el que se actualizan los pesos durante el entrenamiento.", "Una época es una pasada completa por todos los datos de entrenamiento.", "Es una técnica que apaga neuronas al azar durante el entrenamiento para evitar el overfitting.", "Es detener el entrenamiento cuando el error de validación deja de mejorar.", "Una CNN es una red convolucional, muy usada para analizar imágenes.", "Es una operación que desliza un filtro sobre la imagen para detectar bordes, texturas y formas.", "Es reducir el tamaño de un mapa de características quedándose, por ejemplo, con el valor máximo.", "Es reutilizar un modelo ya entrenado y adaptarlo a una tarea nueva con pocos datos.", "NLP significa procesamiento de lenguaje natural: enseñar a las máquinas a trabajar con texto humano.", "Es el área de la IA que permite a las computadoras entender y generar lenguaje humano.", "Un token es un pedazo de texto, como una palabra o parte de una palabra, que el modelo procesa como un número.", "Es dividir el texto en tokens y convertir cada uno en un número.", "Es rellenar las secuencias cortas con ceros para que todas tengan la misma longitud.", "Es una forma de representar texto que da más peso a las palabras frecuentes en un documento pero raras en el resto.", "Es un vector de números que representa el significado de una palabra o token.", "Sirven para que palabras con significado parecido tengan vectores cercanos.", "Es un método clásico para aprender embeddings de palabras a partir de su contexto.", "Es clasificar un texto según la emoción u opinión que expresa, por ejemplo positivo o negativo.", "Es una arquitectura de red neuronal basada en el mecanismo de atención. Es la base de GPT y BERT.", "Es un mecanismo que permite a cada token mirar a los demás tokens y decidir cuáles son importantes.", "Es la atención de una secuencia sobre sí misma: cada palabra calcula cuánto debe fijarse en las otras.", "Son tres proyecciones de cada token. La Query pregunta, la Key responde si es relevante y el Value aporta la información.", "Es usar varias atenciones en paralelo para que cada cabeza capture relaciones distintas.", "Es una máscara que impide que un token mire a los tokens futuros. La usan los modelos como GPT.", "BERT es un Transformer solo encoder que lee el texto en ambas direcciones. Es bueno para entender y clasificar.", "GPT es un Transformer solo decoder que genera texto prediciendo el siguiente token.", "BERT ve toda la frase y se usa para entender texto. GPT solo ve lo anterior y se usa para generar texto.", "Un LLM es un modelo de lenguaje grande, entrenado con enormes cantidades de texto.", "Es un modelo que calcula la probabilidad del siguiente token dada una secuencia.", "Calculo la probabilidad de cada token posible, elijo uno, lo agrego al texto y repito.", "Es un parámetro que controla la creatividad: baja da respuestas seguras y alta da respuestas más variadas.", "Es elegir el siguiente token solo entre los más probables cuya probabilidad acumulada llega a p.", "Es seguir entrenando un modelo preentrenado con datos nuevos para especializarlo.", "Primero GPT-2 leyó mucho texto en español y luego me ajustaron con ejemplos de preguntas y respuestas.", "Es la primera fase: el modelo lee muchísimo texto y aprende a predecir el siguiente token.", "Es la cantidad máxima de tokens que el modelo puede leer a la vez.", "Es una plataforma con miles de modelos y datasets abiertos, y la librería transformers.", "Python es el lenguaje de programación más usado en ciencia de datos e inteligencia artificial.", "PyTorch es una librería de Python para crear y entrenar redes neuronales.", "TensorFlow es una librería de Google para construir y entrenar modelos de deep learning.", "Es un procesador que hace muchos cálculos en paralelo y acelera el entrenamiento de redes neuronales.", "Un tensor es un arreglo de números con varias dimensiones, como una matriz generalizada.", "NumPy es la librería de Python para trabajar con arreglos y cálculos numéricos.", "Pandas es la librería de Python para cargar, limpiar y analizar tablas de datos.", "Aprende Python, luego estadística básica, después machine learning y por último deep learning.", "Practica todos los días con proyectos pequeños y explica lo que aprendes a otra persona.", "Porque automatiza tareas, encuentra patrones en grandes datos y ayuda a tomar mejores decisiones.", "La IA cambia el trabajo, pero los programadores que saben usarla son más productivos.", "¿Por qué la red neuronal fue al psicólogo? Porque tenía demasiadas capas ocultas.", "Hola", "Buenos días", "Buenas noches", "¿Cómo te llamas?", "¿Cuál es tu nombre?", "¿Quién eres?", "¿Quién te creó?", "¿Qué eres?", "¿Eres una persona?", "¿Eres ChatGPT?", "¿Cuántos parámetros tienes?", "¿En qué idioma hablas?", "¿Qué puedes hacer?", "¿Cómo estás?", "Gracias", "Muchas gracias por tu ayuda", "Adiós", "Chao", "¿Qué hora es?", "¿Qué clima hace hoy?", "¿Tienes sentimientos?", "¿Siempre dices la verdad?", "¿Qué es una alucinación?", "¿Qué es la inteligencia artificial?", "Explícame qué es la IA", "¿Qué es el machine learning?", "¿Qué es el aprendizaje automático?", "¿Qué es el deep learning?", "¿Qué diferencia hay entre IA, machine learning y deep learning?", "¿Qué es el aprendizaje supervisado?", "¿Qué es el aprendizaje no supervisado?", "¿Qué es un dataset?", "¿Qué es el overfitting?", "¿Qué es el sobreajuste?", "¿Cómo evito el overfitting?", "¿Qué es una red neuronal?", "¿Qué es una neurona artificial?", "¿Qué es una función de activación?", "¿Qué hace ReLU?", "¿Para qué sirve Softmax?", "¿Qué es el backpropagation?", "¿Qué es el descenso del gradiente?", "¿Qué es la función de pérdida?", "¿Qué es Adam?", "¿Qué es el learning rate?", "¿Qué es una época?", "¿Qué es el Dropout?", "¿Qué es el Early Stopping?", "¿Qué es una CNN?", "¿Qué es una convolución?", "¿Qué es el pooling?", "¿Qué es el transfer learning?", "¿Qué es NLP?", "¿Qué es el procesamiento de lenguaje natural?", "¿Qué es un token?", "¿Qué es la tokenización?", "¿Qué es el padding?", "¿Qué es TF-IDF?", "¿Qué es un embedding?", "¿Para qué sirven los embeddings?", "¿Qué es Word2Vec?", "¿Qué es el análisis de sentimientos?", "¿Qué es un Transformer?", "¿Qué es la atención?", "¿Qué es la self-attention?", "¿Qué son Query, Key y Value?", "¿Qué es la atención multi-cabeza?", "¿Qué es la máscara causal?", "¿Qué es BERT?", "¿Qué es GPT?", "¿Qué diferencia hay entre BERT y GPT?", "¿Qué es un LLM?", "¿Qué es un modelo de lenguaje?", "¿Cómo generas texto?", "¿Qué es la temperatura?", "¿Qué es top-p?", "¿Qué es el fine-tuning?", "¿Cómo te entrenaron?", "¿Qué es el preentrenamiento?", "¿Qué es la ventana de contexto?", "¿Qué es Hugging Face?", "¿Qué es Python?", "¿Qué es PyTorch?", "¿Qué es TensorFlow?", "¿Qué es una GPU?", "¿Qué es un tensor?", "¿Qué es NumPy?", "¿Qué es Pandas?", "¿Cómo empiezo a aprender IA?", "Dame un consejo para estudiar", "¿Por qué es importante la IA?", "¿La IA va a reemplazar a los programadores?", "Cuéntame un chiste"].concat([
+  "La inteligencia artificial es una herramienta que aprende de los datos.",
+  "La inteligencia artificial es el campo que estudia cómo las máquinas aprenden.",
+  "Un modelo de lenguaje es una red neuronal que predice el siguiente token.",
+  "El modelo aprende patrones del texto y genera respuestas en español.",
+  "La atención permite que cada token mire a los demás tokens de la frase.",
+]);
+
+/* ================= 1 · BPE real ================= */
+(function bpe(){
+  const freq = new Map();
+  CORPUS.join(" ").toLowerCase().replace(/[^\p{L}\p{N}\s]/gu," ").split(/\s+/).filter(Boolean).forEach(w => freq.set(w,(freq.get(w)||0)+1));
+  let words = [...freq].map(([w,f]) => ({s:["▁",...w], f}));
+  const merges = [];
+  for (let m=0; m<600; m++){
+    const pc = new Map();
+    for (const w of words) for (let i=0;i<w.s.length-1;i++){ const k = w.s[i]+"\u0000"+w.s[i+1]; pc.set(k,(pc.get(k)||0)+w.f); }
+    let best = null, bc = 1; for (const [k,c] of pc) if (c > bc){ best = k; bc = c; }
+    if (!best) break; const [a,b] = best.split("\u0000"); merges.push([a,b,bc]);
+    for (const w of words){ const out = []; for (let i=0;i<w.s.length;i++){ if (i < w.s.length-1 && w.s[i]===a && w.s[i+1]===b){ out.push(a+b); i++; } else out.push(w.s[i]); } w.s = out; }
+  }
+  const baseChars = new Set(); freq.forEach((_,w) => [..."▁"+w].forEach(c => baseChars.add(c)));
+  const slider = $("#bpeMerges"); slider.max = merges.length;
+  function tokenizeWord(word, n){
+    let s = ["▁",...word.toLowerCase()];
+    for (let m=0;m<n;m++){ const [a,b] = merges[m]; if (s.length < 2) break; const out=[]; for (let i=0;i<s.length;i++){ if (i<s.length-1 && s[i]===a && s[i+1]===b){ out.push(a+b); i++; } else out.push(s[i]); } s = out; }
+    return s;
+  }
+  const hue = t => { let h = 0; for (const c of t) h = (h*31 + c.charCodeAt(0)) % 360; return h; };
+  function render(){
+    const n = +slider.value; $("#bpeMergesOut").textContent = n;
+    const text = $("#bpeInput").value; const ws = text.split(/\s+/).filter(Boolean);
+    const box = $("#bpeToks"); box.innerHTML = ""; let count = 0;
+    ws.forEach(w => { const parts = w.match(/[\p{L}\p{N}]+|[^\p{L}\p{N}\s]/gu) || []; parts.forEach((p,pi) => { const toks = /[\p{L}\p{N}]/u.test(p) ? tokenizeWord(p,n) : [pi===0 ? "▁"+p : p]; if (pi>0 && toks[0]==="▁") toks.shift(); else if (pi>0 && toks[0].startsWith("▁")) toks[0] = toks[0].slice(1);
+      toks.forEach(t => { const s = document.createElement("span"); s.className = "tok"; s.textContent = t; const h = 270 + (hue(t) % 70) - 35; s.style.background = `hsl(${h} 55% 28%)`; s.style.borderColor = `hsl(${h} 70% 55% / .6)`; box.appendChild(s); count++; }); }); });
+    $("#stWords").textContent = ws.length; $("#stToks").textContent = count; $("#stRatio").textContent = ws.length ? (count/ws.length).toFixed(2).replace(".",",") : "0";
+    $("#stVocab").textContent = fmt(baseChars.size + n);
+    $("#bpeLast").textContent = n ? `"${merges[n-1][0]}" + "${merges[n-1][1]}" → "${merges[n-1][0]+merges[n-1][1]}" (aparece ${merges[n-1][2]} veces)` : "ninguna: solo caracteres";
+  }
+  slider.oninput = render; $("#bpeInput").oninput = render;
+  let anim; $("#bpePlay").onclick = () => { clearInterval(anim); slider.value = 0; render(); anim = setInterval(() => { slider.value = +slider.value + (+slider.value < 40 ? 2 : 12); render(); if (+slider.value >= +slider.max) clearInterval(anim); }, REDUCED ? 1 : 90); };
+  render();
+})();
+
+/* ================= 2 · Arcos de atención ================= */
+(function arcs(){
+  const svg = $("#attsvg"), words = ["El","perro","persiguió","al","gato","porque","tenía","hambre"];
+  const REL = { 0:{1:3}, 1:{0:2,2:1.5}, 2:{1:3,4:2.5}, 3:{4:2,2:1}, 4:{2:2.5,3:1.5,1:1}, 5:{2:2,6:1}, 6:{1:3.2,4:2.6,5:1.2,7:1.5}, 7:{6:3,1:1.6,4:1.2} };
+  const xs = words.map((_,i) => 62 + i*111), Y = 238; let sel = 6, causal = false;
+  function weights(i){ const raw = words.map((_,j) => (j===i ? 1.4 : .35) + (REL[i][j]||0)); const m = raw.map((v,j) => causal && j>i ? 0 : Math.exp(v)); const s = m.reduce((a,b)=>a+b,0); return m.map(v => v/s); }
+  function draw(){
+    svg.innerHTML = ""; const w = weights(sel); const gA = svgEl("g",{},svg);
+    w.forEach((v,j) => { if (j===sel || v < .001) return; const h = 24 + Math.abs(j-sel)*16;
+      const p = svgEl("path",{d:`M${xs[sel]} ${Y-22} C ${xs[sel]} ${Y-22-h*1.3}, ${xs[j]} ${Y-22-h*1.3}, ${xs[j]} ${Y-22}`,fill:"none",stroke:C.magenta,"stroke-width":1+v*22,"stroke-linecap":"round",opacity:.25+v*1.6},gA);
+      if (!REDUCED){ const L = p.getTotalLength(); p.style.strokeDasharray = L; p.animate([{strokeDashoffset:L},{strokeDashoffset:0}],{duration:600,easing:"ease-out",fill:"forwards"}); } });
+    words.forEach((t,j) => { const g = svgEl("g",{tabindex:0,role:"button","aria-label":`Ver atención de ${t}`,style:"cursor:pointer"},svg);
+      const isSel = j===sel, hidden = causal && j>sel;
+      svgEl("rect",{x:xs[j]-50,y:Y-22,width:100,height:44,rx:12,fill: isSel ? C.violet : C.surface2,stroke: isSel ? C.magenta : C.line,"stroke-width":isSel?2:1,opacity: hidden ? .3 : 1},g);
+      const tx = svgEl("text",{x:xs[j],y:Y+5,"text-anchor":"middle",fill:C.fg,"font-size":15,"font-family":"Figtree, system-ui, sans-serif","font-weight":isSel?700:400,opacity: hidden ? .4 : 1},g); tx.textContent = t;
+      const pv = svgEl("text",{x:xs[j],y:Y+40,"text-anchor":"middle",fill: w[j]>.15 ? C.magenta : C.dim,"font-size":12,"font-family":"JetBrains Mono, ui-monospace, monospace"},g); pv.textContent = hidden ? "futuro" : (w[j]*100).toFixed(0)+"%";
+      const pick = () => { sel = j; draw(); }; g.addEventListener("click", pick); g.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(); } }); });
+  }
+  const b = $("#attCausal"); b.onclick = () => { causal = !causal; b.setAttribute("aria-pressed", causal); $("#attHint").textContent = causal ? "Con máscara causal: estilo GPT, solo se mira hacia atrás." : "Sin máscara: estilo BERT, todos ven a todos."; draw(); };
+  draw();
+})();
+
+/* ================= 2 · Q·K·V paso a paso (cálculo real) ================= */
+(function qkv(){
+  const toks = ["el","gato","come","pescado"], d = 3; let seed = 7, step = 0, causal = false, scale = true, X, Wq, Wk, Wv;
+  const mk = (r,c,R) => Array.from({length:r},()=>Array.from({length:c},()=>+(R()*2-1).toFixed(2)));
+  const mul = (A,B) => A.map(r => B[0].map((_,j) => r.reduce((s,v,k) => s + v*B[k][j], 0)));
+  const T = A => A[0].map((_,j) => A.map(r => r[j]));
+  function init(){ const R = rng(seed); X = mk(4,d,R).map(r=>r.map(v=>+(v*3).toFixed(2))); Wq = mk(d,d,R); Wk = mk(d,d,R); Wv = mk(d,d,R); }
+  const STEPS = [
+    {f:[0], t:"<b>Paso 0 · Entrada.</b> Cada token es un vector (su embedding). Aquí d = 3 para que quepa en pantalla; en GPT-2, d = 768."},
+    {f:[1], t:"<b>Paso 1 · Proyecciones.</b> Multiplicamos por tres matrices aprendidas: <b>Q</b> = qué busco, <b>K</b> = qué ofrezco, <b>V</b> = qué información aporto. Luego <b>Q·Kᵀ</b> da la afinidad de cada par de tokens."},
+    {f:[2], t:"<b>Paso 2 · Escalar.</b> Dividimos entre √d<sub>k</sub> para que los puntajes no sean enormes. Apaga el botón \"Escalar\" para ver qué pasa sin esto."},
+    {f:[3], t:"<b>Paso 3 · Softmax.</b> Cada fila se convierte en pesos que suman 1: cuánta atención pone cada token en los demás. Activa la máscara causal para tapar el futuro."},
+    {f:[4], t:"<b>Paso 4 · Mezclar con V.</b> Cada token sale como una mezcla ponderada de los Values: ahora \"gato\" sabe que alguien \"come\"."},
+  ];
+  function table(title, M, rows, cols, opt = {}){
+    const wrap = document.createElement("div"); wrap.className = "mat" + (opt.dim ? " dim" : "");
+    const lab = document.createElement("span"); lab.className = "label"; lab.innerHTML = title; wrap.appendChild(lab);
+    const tb = document.createElement("table"); let h = "<thead><tr><th></th>" + cols.map(c=>`<th>${c}</th>`).join("") + "</tr></thead><tbody>";
+    const flat = M.flat().filter(Number.isFinite); const mx = Math.max(...flat.map(Math.abs), 1e-9);
+    M.forEach((r,i) => { h += `<tr><th>${rows[i]}</th>` + r.map(v => { if (!Number.isFinite(v)) return `<td style="background:${C.surface2};color:${C.dim}">−∞</td>`;
+      const a = opt.prob ? v : Math.abs(v)/mx; const col = opt.prob ? `rgba(224,64,224,${.08 + a*.85})` : (v >= 0 ? `rgba(155,77,255,${.1 + a*.7})` : `rgba(94,230,181,${.08 + a*.45})`);
+      return `<td style="background:${col}">${opt.prob ? v.toFixed(2) : v.toFixed(2)}</td>`; }).join("") + "</tr>"; });
+    tb.innerHTML = h + "</tbody>"; wrap.appendChild(tb); return wrap;
+  }
+  function render(){
+    const Q = mul(X,Wq), K = mul(X,Wk), V = mul(X,Wv);
+    let S = mul(Q, T(K)); const sc = scale ? Math.sqrt(d) : 1; const S2 = S.map(r => r.map(v => v/sc));
+    const Sm = S2.map((r,i) => r.map((v,j) => causal && j>i ? -Infinity : v));
+    const P = Sm.map(r => { const m = Math.max(...r.filter(Number.isFinite)); const e = r.map(v => Number.isFinite(v) ? Math.exp(v-m) : 0); const s = e.reduce((a,b)=>a+b,0); return e.map(v=>v/s); });
+    const O = mul(P, V);
+    const box = $("#mats"); box.innerHTML = ""; const dims = ["d1","d2","d3"];
+    box.appendChild(table("X (embeddings)", X, toks, dims, {dim: step>1}));
+    if (step >= 1){ box.appendChild(table("Q", Q, toks, dims, {dim: step>2})); box.appendChild(table("K", K, toks, dims, {dim: step>2})); }
+    if (step >= 1) box.appendChild(table(step>=2 ? (scale ? "Q·Kᵀ / √d" : "Q·Kᵀ (sin escalar)") : "Q·Kᵀ", (step>=2 ? (step>=3 ? Sm : S2) : S), toks, toks, {dim: step>3}));
+    if (step >= 3) box.appendChild(table("softmax → pesos", P, toks, toks, {prob:true}));
+    if (step >= 4){ box.appendChild(table("V", V, toks, dims, {dim:true})); box.appendChild(table("Salida = pesos · V", O, toks, dims)); }
+    $("#qkvText").innerHTML = STEPS[step].t + (step>=3 ? ` <span class="mono" style="color:var(--lilac)">Peso máximo medio por fila: ${(P.reduce((a,r)=>a+Math.max(...r),0)/4*100).toFixed(0)}%</span>` : "");
+    document.querySelectorAll("#formula span").forEach(s => s.classList.toggle("hl", STEPS[step].f.includes(+s.dataset.s)));
+    $("#qkvPrev").disabled = step === 0; $("#qkvNext").disabled = step === STEPS.length-1;
+  }
+  $("#qkvNext").onclick = () => { step = Math.min(step+1, STEPS.length-1); render(); };
+  $("#qkvPrev").onclick = () => { step = Math.max(step-1, 0); render(); };
+  const bc = $("#qkvCausal"), bs = $("#qkvScale");
+  bc.onclick = () => { causal = !causal; bc.setAttribute("aria-pressed", causal); if (step < 3) step = 3; render(); };
+  bs.onclick = () => { scale = !scale; bs.setAttribute("aria-pressed", scale); if (step < 2) step = 2; render(); };
+  $("#qkvShuffle").onclick = () => { seed++; init(); render(); };
+  init(); render();
+})();
+
+/* ================= 2 · Cabezas ================= */
+(function heads(){
+  const toks = ["El","perro","persiguió","al","gato","porque","tenía","hambre"], n = toks.length;
+  const HEADS = [
+    {n:"Token anterior", d:"Cada palabra mira a la que tiene justo detrás.", f:(i,j) => j===i-1 ? 4 : (j===i ? 1 : 0)},
+    {n:"Primer token", d:"\"Lugar de descanso\" cuando no hay nada relevante.", f:(i,j) => j===0 ? 3.5 : (j===i?1:0)},
+    {n:"Sujeto ↔ verbo", d:"Los verbos buscan a quién hace la acción.", f:(i,j) => ((i===2||i===6)&&(j===1||j===4)) ? 3 : (j===i?1.2:0)},
+    {n:"Difusa", d:"Promedia el contexto: resume la frase hasta aquí.", f:() => 1},
+  ];
+  const box = $("#heads"); let active = 0;
+  HEADS.forEach((h,hi) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "head-card"; b.setAttribute("aria-pressed", hi===0);
+    b.innerHTML = `<span class="label">Cabeza ${hi}</span><canvas width="${n}" height="${n}"></canvas><h3 style="margin-top:8px;font-size:.85rem">${h.n}</h3><p>${h.d}</p>`;
+    const ctx = b.querySelector("canvas").getContext("2d");
+    for (let i=0;i<n;i++){ const raw = toks.map((_,j) => j>i ? -Infinity : h.f(i,j)); const m = Math.max(...raw.filter(Number.isFinite)); const e = raw.map(v => Number.isFinite(v)?Math.exp(v-m):0); const s = e.reduce((a,c)=>a+c,0);
+      e.forEach((v,j) => { const p = v/s; ctx.fillStyle = j>i ? C.surface2 : `rgba(224,64,224,${.06 + p*.94})`; ctx.fillRect(j,i,1,1); }); }
+    b.onclick = () => { active = hi; [...box.children].forEach((c,ci) => c.setAttribute("aria-pressed", ci===hi)); };
+    box.appendChild(b);
+  });
+})();
+
+/* ================= 2 · Bloque Transformer animado ================= */
+(function block(){
+  const svg = $("#blocksvg");
+  const defs = svgEl("defs",{},svg); const g = svgEl("linearGradient",{id:"gBox",x1:0,y1:0,x2:1,y2:1},defs); svgEl("stop",{offset:0,"stop-color":C.violet},g); svgEl("stop",{offset:1,"stop-color":C.magenta},g);
+  const box = (x,y,w,h,txt,hot) => { svgEl("rect",{x,y,width:w,height:h,rx:12,fill: hot ? "url(#gBox)" : C.surface2,stroke: hot ? "none" : C.line},svg); const t = svgEl("text",{x:x+w/2,y:y+h/2+5,"text-anchor":"middle",fill:C.fg,"font-size":14,"font-family":"Figtree, system-ui, sans-serif","font-weight":hot?700:500},svg); t.textContent = txt; };
+  const MAIN = "M150 450 L150 20";
+  svgEl("path",{d:MAIN,stroke:C.line,"stroke-width":2,fill:"none"},svg);
+  svgEl("path",{d:"M150 410 L320 410 L320 245 L165 245",stroke:C.lilac,"stroke-width":1.5,fill:"none","stroke-dasharray":"5 5"},svg);
+  svgEl("path",{d:"M150 215 L320 215 L320 50 L165 50",stroke:C.lilac,"stroke-width":1.5,fill:"none","stroke-dasharray":"5 5"},svg);
+  const lt = (x,y,s) => { const t = svgEl("text",{x,y,fill:C.lilac,"font-size":12,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); t.textContent = s; };
+  lt(328,330,"residual"); lt(328,135,"residual");
+  box(60,355,180,36,"LayerNorm"); box(60,290,180,42,"Atención multi-cabeza",true);
+  svgEl("circle",{cx:150,cy:245,r:15,fill:C.bg,stroke:C.magenta,"stroke-width":2},svg); const p1 = svgEl("text",{x:150,y:251,"text-anchor":"middle",fill:C.magenta,"font-size":18,"font-weight":700},svg); p1.textContent = "+";
+  box(60,160,180,36,"LayerNorm"); box(60,95,180,42,"MLP (4× ancho, GELU)",true);
+  svgEl("circle",{cx:150,cy:50,r:15,fill:C.bg,stroke:C.magenta,"stroke-width":2},svg); const p2 = svgEl("text",{x:150,y:56,"text-anchor":"middle",fill:C.magenta,"font-size":18,"font-weight":700},svg); p2.textContent = "+";
+  const tin = svgEl("text",{x:150,y:468,"text-anchor":"middle",fill:C.muted,"font-size":12,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); tin.textContent = "tokens (embedding + posición)";
+  const tout = svgEl("text",{x:150,y:14,"text-anchor":"middle",fill:C.muted,"font-size":12,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); tout.textContent = "→ siguiente bloque (×12 en GPT-2)";
+  if (!REDUCED){
+    [[MAIN,0],[MAIN,1.3],[MAIN,2.6],["M150 410 L320 410 L320 245 L165 245",.4],["M150 215 L320 215 L320 50 L165 50",2.1]].forEach(([d,delay],k) => {
+      const c = svgEl("circle",{r: k<3 ? 6 : 4, fill: k<3 ? C.magenta : C.lilac},svg); const am = svgEl("animateMotion",{dur:"3.9s",repeatCount:"indefinite",begin:delay+"s",path:d},c); });
+  }
+  const BARS = [["MiniTransformer (nuestro)",13.69e6,"≈ 13,7 M"],["GPT-2 small español",124.4e6,"124,4 M"],["Qwen3-0.6B (Clase 3)",596e6,"≈ 0,6 B"],["GPT-3",175e9,"175 B"]];
+  const lo = Math.log10(1e6), hi = Math.log10(2e11), bx = $("#bars");
+  BARS.forEach(([n,v,l]) => { const r = document.createElement("div"); r.className = "bar"; r.innerHTML = `<span>${n}</span><div class="track"><div class="fill"></div></div><span class="v">${l}</span>`; bx.appendChild(r); r._w = ((Math.log10(v)-lo)/(hi-lo)*100).toFixed(1) + "%"; });
+  const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ [...bx.children].forEach(r => r.querySelector(".fill").style.width = r._w); io2.disconnect(); } }), {threshold:.3});
+  io2.observe(bx); setTimeout(() => [...bx.children].forEach(r => r.querySelector(".fill").style.width = r._w), 2500);
+})();
+
+/* ================= 4 · BERT vs GPT ================= */
+(function bg(){
+  const svg = $("#bgsvg"); let mode = "bert", timer;
+  const BERT = {w:["Fui","al","[MASK]","a","retirar","dinero"], tgt:2, preds:[["banco",.71],["cajero",.12],["centro",.05]]};
+  const GPT = {w:["La","capital","de","Colombia","es"], preds:[["Bogotá",.62],["una",.11],["la",.07]]};
+  function draw(){
+    svg.innerHTML = ""; clearInterval(timer); const d = mode === "bert" ? BERT : GPT; const n = d.w.length; const W = 900, gap = 130, x0 = (W - (n-1)*gap)/2 - (mode==="gpt" ? 60 : 0); const Y = 150;
+    const xs = d.w.map((_,i) => x0 + i*gap); const tx = mode === "bert" ? xs[d.tgt] : x0 + n*gap;
+    const gA = svgEl("g",{},svg);
+    d.w.forEach((w,i) => { if (mode==="bert" && i===d.tgt) return; const h = 24 + Math.abs(tx - xs[i]) * .25;
+      const p = svgEl("path",{d:`M${xs[i]} ${Y-22} C ${xs[i]} ${Y-22-h}, ${tx} ${Y-22-h}, ${tx} ${Y-22}`,fill:"none",stroke: xs[i] > tx ? C.mint : C.violet,"stroke-width":2.2,"marker-end":"none",opacity:.85},gA);
+      if (!REDUCED){ const L = p.getTotalLength(); p.style.strokeDasharray = `6 ${L}`; p.animate([{strokeDashoffset:L},{strokeDashoffset:0}],{duration:1400,iterations:Infinity,delay:i*120}); } });
+    d.w.forEach((w,i) => { const isM = mode==="bert" && i===d.tgt; svgEl("rect",{x:xs[i]-52,y:Y-22,width:104,height:44,rx:12,fill: isM ? C.violet : C.surface2,stroke: isM ? C.magenta : C.line},svg);
+      const t = svgEl("text",{x:xs[i],y:Y+5,"text-anchor":"middle",fill:C.fg,"font-size":15,"font-family":isM?"JetBrains Mono, monospace":"Figtree, system-ui, sans-serif"},svg); t.textContent = w; });
+    if (mode==="gpt"){ svgEl("rect",{x:tx-52,y:Y-22,width:104,height:44,rx:12,fill:"none",stroke:C.magenta,"stroke-dasharray":"5 4"},svg); const q = svgEl("text",{x:tx,y:Y+5,"text-anchor":"middle",fill:C.magenta,"font-size":15,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); q.textContent = "?"; }
+    const res = svgEl("text",{x:tx,y:Y+52,"text-anchor":"middle",fill:C.lilac,"font-size":13,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg);
+    let k = 0; const cycle = () => { const [w,p] = d.preds[k % d.preds.length]; res.textContent = `${w} · ${(p*100).toFixed(0)}%`; k++; }; cycle(); timer = setInterval(cycle, 1600);
+    $("#bgCap").innerHTML = mode === "bert" ? "BERT usa contexto de <b style='color:var(--violet)'>la izquierda</b> y de <b style='color:var(--mint)'>la derecha</b> (\"retirar dinero\") para adivinar la palabra tapada. Probabilidades de ejemplo." : "GPT solo puede mirar <b style='color:var(--violet)'>hacia atrás</b> y predecir el token que sigue. Probabilidades de ejemplo.";
+  }
+  const b1 = $("#bgBert"), b2 = $("#bgGpt");
+  b1.onclick = () => { mode = "bert"; b1.setAttribute("aria-pressed","true"); b2.setAttribute("aria-pressed","false"); draw(); };
+  b2.onclick = () => { mode = "gpt"; b2.setAttribute("aria-pressed","true"); b1.setAttribute("aria-pressed","false"); draw(); };
+  draw();
+})();
+
+/* ================= 5 · Generación con un modelo de bigramas ================= */
+(function gen(){
+  const toksAll = CORPUS.map(s => ["<s>", ...s.toLowerCase().match(/[\p{L}\p{N}]+|[.,¿?¡!:]/gu), "</s>"]);
+  const big = new Map(); toksAll.forEach(t => { for (let i=0;i<t.length-1;i++){ const a = t[i], b = t[i+1]; if (!big.has(a)) big.set(a,new Map()); big.get(a).set(b,(big.get(a).get(b)||0)+1); } });
+  const START = ["la","inteligencia","artificial","es"]; let seq = [...START], last = [], picked = null;
+  const R = rng(42); let greedy = false;
+  function dist(){
+    const m = big.get(seq[seq.length-1]) || big.get("<s>"); let arr = [...m].map(([w,c]) => ({w, l: Math.log(c)})).sort((a,b) => b.l - a.l).slice(0,10);
+    const T = +$("#temp").value, k = +$("#topk").value, p = +$("#topp").value;
+    const ex = arr.map(o => Math.exp(o.l / T)); const s = ex.reduce((a,b)=>a+b,0); arr.forEach((o,i) => o.p = ex[i]/s);
+    arr.forEach((o,i) => o.keep = true); if (k > 0) arr.forEach((o,i) => { if (i >= k) o.keep = false; });
+    if (p < 1){ let acc = 0; arr.forEach(o => { if (!o.keep) return; if (acc >= p) o.keep = false; acc += o.p; }); }
+    if (greedy) arr.forEach((o,i) => o.keep = i === 0);
+    const ks = arr.filter(o=>o.keep).reduce((a,o)=>a+o.p,0); arr.forEach(o => o.q = o.keep ? o.p/ks : 0); return arr;
+  }
+  function paint(){
+    $("#tempOut").textContent = (+$("#temp").value).toFixed(1); $("#topkOut").textContent = $("#topk").value; $("#toppOut").textContent = (+$("#topp").value).toFixed(2);
+    const g = $("#genText"); g.innerHTML = seq.map((w,i) => `<span class="${i >= START.length && last.includes(i) ? "new" : ""}">${w === "</s>" ? "⏹" : w}</span>`).join(" ");
+    const arr = dist(); const box = $("#probs"); box.innerHTML = ""; $("#probsTitle").textContent = `Siguiente token después de "${seq[seq.length-1]}"`;
+    arr.forEach(o => { const r = document.createElement("div"); r.className = "prob" + (o.keep ? "" : " cut") + (picked === o.w ? " pick" : ""); r.innerHTML = `<span>${o.w === "</s>" ? "⏹ fin" : o.w}</span><div class="track"><div class="fill" style="width:${(o.q*100).toFixed(1)}%"></div></div><span class="p">${(o.q*100).toFixed(1)}%</span>`; box.appendChild(r); });
+  }
+  function step(){
+    if (seq[seq.length-1] === "</s>") return false; const arr = dist().filter(o => o.keep); let r = R(), w = arr[arr.length-1].w;
+    for (const o of arr){ r -= o.q; if (r <= 0){ w = o.w; break; } }
+    picked = w; paint(); seq.push(w); last = [seq.length-1]; setTimeout(() => { picked = null; paint(); }, REDUCED ? 0 : 450); return w !== "</s>";
+  }
+  $("#genStep").onclick = step;
+  let auto; $("#genAuto").onclick = () => { clearInterval(auto); let n = 0; auto = setInterval(() => { if (!step() || ++n >= 12) clearInterval(auto); }, REDUCED ? 30 : 650); };
+  $("#genReset").onclick = () => { clearInterval(auto); seq = [...START]; last = []; picked = null; paint(); };
+  ["temp","topk","topp"].forEach(id => $("#"+id).oninput = paint);
+  const gb = $("#greedy"); gb.onclick = () => { greedy = !greedy; gb.setAttribute("aria-pressed", greedy); paint(); };
+  paint();
+})();
+
+/* ================= 6 · SFT: máscara, capas, pérdida ================= */
+(function sft(){
+  const prompt = ["Eres"," Mini","GPT",","," un"," asistente","…","\\n\\n","###"," Usuario",":"," ¿","Qué"," es"," un"," token","?","\\n","###"," Mini","GPT",":"];
+  const resp = [" Un"," token"," es"," un"," pedazo"," de"," texto","…","<|endoftext|>"];
+  const m = $("#masked");
+  prompt.forEach(t => { const s = document.createElement("span"); s.className = "tok"; s.textContent = t; s.style.background = C.surface2; s.style.color = C.dim; s.title = "label = -100"; m.appendChild(s); });
+  resp.forEach((t,i) => { const s = document.createElement("span"); s.className = "tok"; s.textContent = t; s.style.background = `color-mix(in srgb, ${C.magenta} 35%, transparent)`; s.style.borderColor = C.magenta; m.appendChild(s); });
+
+  const BLOCK = 7087872, EMB = 38597376 + 786432, LNF = 1536, TOTAL = 124439808;
+  const ly = $("#layers"); for (let i=0;i<12;i++){ const d = document.createElement("div"); d.className = "layer"; d.textContent = "B" + i; ly.appendChild(d); }
+  const fr = $("#frozen");
+  function paint(){ const k = +fr.value; $("#frozenOut").textContent = `${k} / 12`; [...ly.children].forEach((d,i) => { d.className = "layer " + (i < k ? "frozen" : "train"); d.textContent = (i < k ? "❄ " : "") + "B" + i; });
+    const t = (12-k)*BLOCK + LNF + (k ? 0 : EMB); $("#trainP").textContent = (t/1e6).toFixed(1).replace(".",",") + " M"; $("#trainPct").textContent = Math.round(t/TOTAL*100) + "%"; }
+  fr.oninput = paint; paint();
+
+  const svg = $("#losssvg"), W = 640, H = 220, P = {l:46,r:16,t:14,b:34};
+  const tr = [3.9,2.6,1.8,1.25,.9,.68,.55,.48], va = [4.1,3.4,3.0,2.85,2.8,2.82,2.86,2.9];
+  const x = i => P.l + i/(tr.length-1)*(W-P.l-P.r), y = v => P.t + (1 - v/4.5)*(H-P.t-P.b);
+  [0,1,2,3,4].forEach(v => { svgEl("line",{x1:P.l,x2:W-P.r,y1:y(v),y2:y(v),stroke:C.line,"stroke-width":1},svg); const t = svgEl("text",{x:P.l-8,y:y(v)+4,"text-anchor":"end",fill:C.dim,"font-size":11,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); t.textContent = v; });
+  tr.forEach((_,i) => { const t = svgEl("text",{x:x(i),y:H-12,"text-anchor":"middle",fill:C.dim,"font-size":11,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); t.textContent = i+1; });
+  const lab = svgEl("text",{x:W-P.r,y:H-12,"text-anchor":"end",fill:C.dim,"font-size":11,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); lab.textContent = "";
+  const path = arr => arr.map((v,i) => `${i?"L":"M"}${x(i)} ${y(v)}`).join(" ");
+  const pT = svgEl("path",{d:path(tr),fill:"none",stroke:C.violet,"stroke-width":3,"stroke-linecap":"round"},svg);
+  const pV = svgEl("path",{d:path(va),fill:"none",stroke:C.magenta,"stroke-width":3,"stroke-dasharray":"7 6","stroke-linecap":"round"},svg);
+  const lg = (yy,c,s,dash) => { svgEl("line",{x1:W-170,x2:W-146,y1:yy,y2:yy,stroke:c,"stroke-width":3,"stroke-dasharray":dash||""},svg); const t = svgEl("text",{x:W-140,y:yy+4,fill:C.muted,"font-size":12,"font-family":"Figtree, system-ui, sans-serif"},svg); t.textContent = s; };
+  lg(26,C.violet,"train"); lg(46,C.magenta,"validación","7 6");
+  const xl = svgEl("text",{x:(W+P.l)/2,y:H-0,"text-anchor":"middle",fill:C.dim,"font-size":11,"font-family":"JetBrains Mono, ui-monospace, monospace"},svg); xl.textContent = "época";
+  $("#lossPlay").onclick = () => { if (REDUCED) return; [pT,pV].forEach((p,k) => { const L = p.getTotalLength(); p.style.strokeDasharray = k ? "7 6" : L; p.animate(k ? [{opacity:0},{opacity:1}] : [{strokeDashoffset:L},{strokeDashoffset:0}],{duration:2600,easing:"ease-out"}); if (!k){ p.style.strokeDashoffset = 0; } }); };
+})();
+
+/* ================= Quiz ================= */
+(function quiz(){
+  const Q = [
+    {q:"¿Por qué a un LLM le cuesta contar las letras de una palabra?", o:["Porque ve tokens (subpalabras), no letras","Porque no sabe matemáticas","Porque el vocabulario es muy pequeño"], a:0, e:"BPE agrupa letras en tokens: el modelo nunca ve las letras por separado."},
+    {q:"¿Qué hace la máscara causal?", o:["Ignora las palabras raras","Impide que un token mire a los tokens futuros","Divide los puntajes entre √d"], a:1, e:"Pone −∞ en el futuro: después del softmax ese peso es 0. Es lo que permite generar."},
+    {q:"Necesitas clasificar 1 millón de reseñas al día, rápido y barato. ¿Qué familia usas?", o:["Decoder (GPT)","Encoder (BERT)","Ninguna, una RNN"], a:1, e:"Los encoders son ideales para entender/clasificar y son mucho más pequeños y rápidos."},
+    {q:"Subes la temperatura de 0.7 a 1.8. ¿Qué pasa?", o:["Respuestas más seguras y repetitivas","Respuestas más variadas y caóticas","El modelo aprende más rápido"], a:1, e:"Dividir los logits entre T > 1 aplana la distribución: tokens raros ganan probabilidad."},
+    {q:"En el SFT de MiniGPT, ¿por qué ponemos −100 en los labels del prompt?", o:["Para que la pérdida solo cuente la respuesta","Para borrar el prompt","Para acelerar la tokenización"], a:0, e:"−100 es el ignore_index de CrossEntropyLoss: el modelo aprende a responder, no a copiar la pregunta."},
+  ];
+  const box = $("#quiz");
+  Q.forEach((it,qi) => { const d = document.createElement("div"); d.className = "q"; d.innerHTML = `<b>${qi+1}. ${it.q}</b><div class="opts"></div><p class="fb" aria-live="polite"></p>`;
+    const opts = d.querySelector(".opts"); it.o.forEach((o,oi) => { const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = o;
+      b.onclick = () => { [...opts.children].forEach(c => c.classList.remove("ok","no")); b.classList.add(oi===it.a ? "ok" : "no"); if (oi!==it.a) opts.children[it.a].classList.add("ok"); d.querySelector(".fb").textContent = (oi===it.a ? "✓ Correcto. " : "✗ Casi. ") + it.e; }; opts.appendChild(b); });
+    box.appendChild(d); });
+})();
+})();
+</script>
+
+</body>
+</html>

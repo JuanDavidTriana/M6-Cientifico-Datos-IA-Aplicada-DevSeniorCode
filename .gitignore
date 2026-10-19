@@ -25,6 +25,9 @@ Unidad 2/clase_02_transformers_minigpt/*
 !Unidad 2/clase_02_transformers_minigpt/requirements.txt
 !Unidad 2/clase_02_transformers_minigpt/notebooks_estudiantes/
 !Unidad 2/clase_02_transformers_minigpt/datasets/
+!Unidad 2/clase_02_transformers_minigpt/web/
+!Unidad 2/clase_02_transformers_minigpt/notebooks/
+!Unidad 2/clase_02_transformers_minigpt/presentacion/
 Unidad 2/clase_04_nlp_aplicado_huggingface/*
 
 # Clase 3: solo se sube lo de estudiantes (README, requirements, notebook vacio y datasets)
