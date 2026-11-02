@@ -3,6 +3,7 @@
 
 # Datasets pequenos que SI se versionan
 !Unidad 2/**/datasets/*.csv
+!Unidad 3/**/datasets/*.csv
 !Unidad 1/clase_01_ann_tensorflow/Clase 1/Ejemplo/loan_approval_dataset.csv
 
 # Datos pesados de la clase CNN
@@ -37,3 +38,10 @@ Unidad 2/clase_03_ia_generativa_prompt_engineering/*
 !Unidad 2/clase_03_ia_generativa_prompt_engineering/notebooks_estudiantes/
 !Unidad 2/clase_03_ia_generativa_prompt_engineering/datasets/
 !Unidad 2/clase_03_ia_generativa_prompt_engineering/web/
+
+# Clase 1: solo se sube lo de estudiantes (README, requirements, notebook vacio y datasets)
+Unidad 3/clase_01_recomendacion_aprendizaje_refuerzo/*
+!Unidad 3/clase_01_recomendacion_aprendizaje_refuerzo/README.md
+!Unidad 3/clase_01_recomendacion_aprendizaje_refuerzo/requirements.txt
+!Unidad 3/clase_01_recomendacion_aprendizaje_refuerzo/notebooks_estudiantes/
+!Unidad 3/clase_01_recomendacion_aprendizaje_refuerzo/datasets/

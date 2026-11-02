@@ -1,0 +1,601 @@
+estudiante_id,perfil,nivel_inicial,ciudad,edad
+E0001,Desarrollador web,1,Bucaramanga,22
+E0002,Científico de datos,1,Bucaramanga,30
+E0003,Científico de datos,2,Quito,41
+E0004,Científico de datos,1,Lima,26
+E0005,Desarrollador web,1,Barranquilla,44
+E0006,Ingeniero de ML,3,Santiago,37
+E0007,Científico de datos,2,Quito,38
+E0008,Analista de datos,2,Santiago,48
+E0009,Científico de datos,1,Ciudad de México,31
+E0010,Analista de datos,3,Barranquilla,29
+E0011,Ingeniero de ML,1,Ciudad de México,49
+E0012,Ingeniero de ML,1,Barranquilla,35
+E0013,Ingeniero de ML,3,Cali,37
+E0014,Analista de datos,2,Bucaramanga,27
+E0015,Ingeniero de ML,2,Santiago,24
+E0016,Científico de datos,2,Pereira,23
+E0017,Científico de datos,2,Barranquilla,25
+E0018,Ingeniero de IA generativa,1,Bucaramanga,24
+E0019,Ingeniero de IA generativa,1,Cali,41
+E0020,Analista de datos,1,Lima,19
+E0021,Científico de datos,1,Barranquilla,38
+E0022,Ingeniero de IA generativa,3,Pereira,48
+E0023,Desarrollador web,1,Barranquilla,42
+E0024,Desarrollador web,2,Barranquilla,30
+E0025,Ingeniero de ML,2,Santiago,19
+E0026,Científico de datos,2,Barranquilla,44
+E0027,Científico de datos,1,Bogotá,18
+E0028,Ingeniero de IA generativa,1,Barranquilla,39
+E0029,Ingeniero de ML,3,Pereira,39
+E0030,Científico de datos,2,Bogotá,24
+E0031,Ingeniero de ML,2,Barranquilla,41
+E0032,Analista de datos,3,Medellín,23
+E0033,Científico de datos,2,Pereira,25
+E0034,Desarrollador web,1,Ciudad de México,43
+E0035,Desarrollador web,2,Santiago,49
+E0036,Desarrollador web,1,Barranquilla,26
+E0037,Ingeniero de ML,2,Quito,47
+E0038,Analista de datos,3,Cali,47
+E0039,Analista de datos,2,Ciudad de México,42
+E0040,Analista de datos,1,Pereira,22
+E0041,Científico de datos,1,Ciudad de México,27
+E0042,Ingeniero de ML,3,Ciudad de México,39
+E0043,Científico de datos,1,Pereira,49
+E0044,Ingeniero de ML,1,Cali,44
+E0045,Ingeniero de ML,1,Pereira,31
+E0046,Científico de datos,1,Quito,25
+E0047,Científico de datos,1,Santiago,48
+E0048,Analista de datos,2,Santiago,26
+E0049,Científico de datos,1,Medellín,28
+E0050,Ingeniero de IA generativa,1,Pereira,48
+E0051,Analista de datos,1,Medellín,35
+E0052,Ingeniero de ML,1,Lima,26
+E0053,Analista de datos,1,Santiago,18
+E0054,Científico de datos,2,Bogotá,31
+E0055,Ingeniero de IA generativa,1,Lima,49
+E0056,Ingeniero de ML,1,Santiago,31
+E0057,Desarrollador web,1,Quito,40
+E0058,Científico de datos,1,Barranquilla,26
+E0059,Ingeniero de ML,1,Medellín,42
+E0060,Ingeniero de ML,1,Santiago,42
+E0061,Ingeniero de IA generativa,3,Santiago,37
+E0062,Analista de datos,1,Pereira,42
+E0063,Ingeniero de ML,2,Santiago,36
+E0064,Científico de datos,1,Bogotá,30
+E0065,Ingeniero de ML,1,Lima,41
+E0066,Analista de datos,1,Bogotá,44
+E0067,Ingeniero de ML,2,Santiago,44
+E0068,Científico de datos,2,Lima,24
+E0069,Desarrollador web,1,Santiago,39
+E0070,Desarrollador web,1,Pereira,18
+E0071,Científico de datos,1,Bogotá,36
+E0072,Analista de datos,1,Bogotá,36
+E0073,Científico de datos,2,Barranquilla,29
+E0074,Analista de datos,1,Ciudad de México,49
+E0075,Científico de datos,1,Medellín,46
+E0076,Analista de datos,3,Quito,19
+E0077,Desarrollador web,1,Cali,24
+E0078,Desarrollador web,1,Bucaramanga,24
+E0079,Científico de datos,2,Cali,46
+E0080,Ingeniero de IA generativa,1,Bucaramanga,34
+E0081,Científico de datos,1,Bucaramanga,41
+E0082,Científico de datos,1,Bogotá,43
+E0083,Analista de datos,3,Pereira,42
+E0084,Ingeniero de ML,1,Ciudad de México,20
+E0085,Desarrollador web,1,Santiago,22
+E0086,Desarrollador web,1,Barranquilla,30
+E0087,Ingeniero de ML,1,Quito,28
+E0088,Ingeniero de IA generativa,2,Quito,41
+E0089,Científico de datos,1,Santiago,22
+E0090,Analista de datos,2,Barranquilla,29
+E0091,Científico de datos,2,Quito,25
+E0092,Ingeniero de IA generativa,2,Pereira,24
+E0093,Científico de datos,1,Bogotá,23
+E0094,Científico de datos,3,Cali,24
+E0095,Ingeniero de ML,2,Lima,36
+E0096,Ingeniero de IA generativa,1,Medellín,31
+E0097,Desarrollador web,2,Bucaramanga,31
+E0098,Desarrollador web,3,Ciudad de México,33
+E0099,Desarrollador web,1,Medellín,41
+E0100,Desarrollador web,3,Bucaramanga,45
+E0101,Analista de datos,1,Cali,34
+E0102,Ingeniero de ML,2,Pereira,38
+E0103,Desarrollador web,3,Cali,41
+E0104,Analista de datos,1,Santiago,40
+E0105,Ingeniero de ML,2,Bogotá,22
+E0106,Científico de datos,1,Santiago,49
+E0107,Desarrollador web,2,Ciudad de México,23
+E0108,Científico de datos,2,Quito,31
+E0109,Ingeniero de IA generativa,1,Quito,38
+E0110,Científico de datos,1,Medellín,30
+E0111,Científico de datos,1,Santiago,25
+E0112,Desarrollador web,1,Pereira,47
+E0113,Científico de datos,1,Santiago,20
+E0114,Científico de datos,1,Quito,25
+E0115,Analista de datos,1,Pereira,49
+E0116,Desarrollador web,1,Barranquilla,41
+E0117,Científico de datos,2,Medellín,20
+E0118,Ingeniero de ML,2,Medellín,42
+E0119,Desarrollador web,2,Barranquilla,49
+E0120,Ingeniero de IA generativa,1,Quito,21
+E0121,Analista de datos,3,Pereira,31
+E0122,Científico de datos,2,Bucaramanga,32
+E0123,Científico de datos,1,Cali,22
+E0124,Científico de datos,1,Pereira,24
+E0125,Científico de datos,2,Lima,23
+E0126,Analista de datos,1,Santiago,23
+E0127,Científico de datos,2,Ciudad de México,30
+E0128,Analista de datos,3,Lima,32
+E0129,Analista de datos,1,Santiago,25
+E0130,Analista de datos,1,Bucaramanga,27
+E0131,Científico de datos,3,Santiago,24
+E0132,Desarrollador web,2,Barranquilla,43
+E0133,Desarrollador web,1,Medellín,24
+E0134,Desarrollador web,3,Bucaramanga,47
+E0135,Científico de datos,3,Medellín,35
+E0136,Científico de datos,2,Medellín,43
+E0137,Ingeniero de IA generativa,2,Quito,38
+E0138,Ingeniero de ML,1,Ciudad de México,26
+E0139,Ingeniero de ML,1,Cali,37
+E0140,Ingeniero de ML,2,Quito,26
+E0141,Analista de datos,1,Bogotá,21
+E0142,Ingeniero de IA generativa,2,Cali,26
+E0143,Científico de datos,2,Ciudad de México,26
+E0144,Ingeniero de IA generativa,1,Barranquilla,22
+E0145,Científico de datos,2,Ciudad de México,18
+E0146,Analista de datos,1,Quito,48
+E0147,Analista de datos,3,Bogotá,34
+E0148,Científico de datos,1,Bogotá,30
+E0149,Científico de datos,2,Santiago,47
+E0150,Ingeniero de ML,2,Pereira,25
+E0151,Ingeniero de IA generativa,1,Pereira,30
+E0152,Analista de datos,2,Bucaramanga,45
+E0153,Ingeniero de IA generativa,2,Bucaramanga,38
+E0154,Desarrollador web,2,Lima,30
+E0155,Ingeniero de ML,2,Pereira,26
+E0156,Desarrollador web,3,Medellín,19
+E0157,Científico de datos,1,Lima,20
+E0158,Científico de datos,2,Lima,23
+E0159,Desarrollador web,1,Medellín,43
+E0160,Desarrollador web,2,Barranquilla,38
+E0161,Científico de datos,2,Ciudad de México,31
+E0162,Analista de datos,1,Lima,43
+E0163,Analista de datos,1,Medellín,23
+E0164,Desarrollador web,3,Bogotá,24
+E0165,Analista de datos,1,Pereira,30
+E0166,Ingeniero de ML,2,Bucaramanga,47
+E0167,Ingeniero de ML,1,Santiago,37
+E0168,Ingeniero de ML,3,Pereira,45
+E0169,Analista de datos,1,Santiago,25
+E0170,Desarrollador web,1,Cali,45
+E0171,Ingeniero de ML,3,Bucaramanga,20
+E0172,Científico de datos,3,Medellín,25
+E0173,Científico de datos,1,Pereira,34
+E0174,Desarrollador web,1,Medellín,19
+E0175,Desarrollador web,2,Bucaramanga,45
+E0176,Científico de datos,3,Barranquilla,45
+E0177,Científico de datos,1,Medellín,35
+E0178,Analista de datos,2,Bogotá,27
+E0179,Científico de datos,2,Pereira,21
+E0180,Desarrollador web,2,Santiago,37
+E0181,Ingeniero de ML,2,Medellín,35
+E0182,Científico de datos,2,Bucaramanga,42
+E0183,Ingeniero de IA generativa,1,Cali,37
+E0184,Científico de datos,3,Quito,22
+E0185,Científico de datos,3,Bucaramanga,21
+E0186,Científico de datos,2,Santiago,42
+E0187,Científico de datos,1,Cali,23
+E0188,Científico de datos,1,Bogotá,48
+E0189,Científico de datos,2,Pereira,21
+E0190,Científico de datos,1,Lima,41
+E0191,Científico de datos,3,Santiago,49
+E0192,Analista de datos,1,Quito,32
+E0193,Analista de datos,2,Quito,19
+E0194,Ingeniero de ML,3,Lima,46
+E0195,Ingeniero de ML,1,Barranquilla,23
+E0196,Analista de datos,1,Bucaramanga,34
+E0197,Desarrollador web,2,Medellín,49
+E0198,Desarrollador web,2,Bucaramanga,41
+E0199,Científico de datos,1,Barranquilla,19
+E0200,Científico de datos,2,Bogotá,44
+E0201,Científico de datos,3,Cali,23
+E0202,Científico de datos,1,Pereira,41
+E0203,Analista de datos,1,Barranquilla,37
+E0204,Ingeniero de ML,1,Santiago,27
+E0205,Científico de datos,1,Bucaramanga,31
+E0206,Ingeniero de ML,1,Santiago,21
+E0207,Analista de datos,1,Lima,49
+E0208,Científico de datos,2,Bogotá,25
+E0209,Desarrollador web,1,Cali,27
+E0210,Científico de datos,3,Ciudad de México,34
+E0211,Ingeniero de IA generativa,1,Pereira,39
+E0212,Científico de datos,1,Barranquilla,34
+E0213,Desarrollador web,2,Pereira,34
+E0214,Ingeniero de IA generativa,3,Santiago,36
+E0215,Ingeniero de IA generativa,1,Barranquilla,45
+E0216,Desarrollador web,1,Bogotá,30
+E0217,Desarrollador web,1,Barranquilla,44
+E0218,Analista de datos,2,Santiago,43
+E0219,Desarrollador web,1,Ciudad de México,48
+E0220,Científico de datos,1,Quito,47
+E0221,Analista de datos,1,Santiago,43
+E0222,Analista de datos,1,Medellín,25
+E0223,Desarrollador web,3,Cali,42
+E0224,Ingeniero de ML,2,Bogotá,41
+E0225,Ingeniero de ML,1,Bogotá,27
+E0226,Analista de datos,1,Quito,39
+E0227,Científico de datos,1,Santiago,26
+E0228,Científico de datos,1,Medellín,34
+E0229,Ingeniero de ML,2,Ciudad de México,43
+E0230,Ingeniero de ML,3,Pereira,24
+E0231,Científico de datos,3,Bogotá,28
+E0232,Ingeniero de ML,3,Santiago,43
+E0233,Ingeniero de ML,3,Quito,32
+E0234,Ingeniero de ML,3,Pereira,48
+E0235,Ingeniero de ML,1,Ciudad de México,18
+E0236,Analista de datos,1,Barranquilla,41
+E0237,Científico de datos,1,Ciudad de México,44
+E0238,Ingeniero de IA generativa,2,Bucaramanga,47
+E0239,Ingeniero de IA generativa,1,Santiago,23
+E0240,Ingeniero de ML,2,Bogotá,49
+E0241,Ingeniero de ML,2,Medellín,30
+E0242,Analista de datos,2,Santiago,29
+E0243,Desarrollador web,1,Cali,29
+E0244,Analista de datos,1,Barranquilla,38
+E0245,Desarrollador web,1,Ciudad de México,39
+E0246,Analista de datos,3,Medellín,33
+E0247,Analista de datos,2,Pereira,20
+E0248,Científico de datos,2,Cali,49
+E0249,Desarrollador web,1,Medellín,25
+E0250,Científico de datos,1,Santiago,21
+E0251,Analista de datos,1,Medellín,37
+E0252,Desarrollador web,2,Bogotá,31
+E0253,Científico de datos,2,Lima,37
+E0254,Analista de datos,1,Quito,46
+E0255,Científico de datos,3,Medellín,21
+E0256,Desarrollador web,1,Ciudad de México,27
+E0257,Científico de datos,3,Pereira,34
+E0258,Ingeniero de IA generativa,1,Quito,43
+E0259,Científico de datos,1,Medellín,37
+E0260,Ingeniero de IA generativa,2,Santiago,30
+E0261,Desarrollador web,1,Lima,37
+E0262,Analista de datos,1,Quito,49
+E0263,Desarrollador web,1,Barranquilla,33
+E0264,Desarrollador web,1,Santiago,46
+E0265,Ingeniero de IA generativa,2,Lima,42
+E0266,Científico de datos,3,Medellín,27
+E0267,Analista de datos,3,Santiago,25
+E0268,Científico de datos,1,Ciudad de México,42
+E0269,Analista de datos,2,Barranquilla,24
+E0270,Científico de datos,1,Pereira,28
+E0271,Analista de datos,1,Barranquilla,25
+E0272,Analista de datos,1,Pereira,37
+E0273,Ingeniero de ML,3,Santiago,27
+E0274,Analista de datos,3,Quito,39
+E0275,Desarrollador web,2,Cali,47
+E0276,Desarrollador web,2,Santiago,44
+E0277,Ingeniero de ML,1,Bucaramanga,48
+E0278,Analista de datos,2,Ciudad de México,18
+E0279,Ingeniero de IA generativa,2,Ciudad de México,32
+E0280,Científico de datos,1,Bucaramanga,25
+E0281,Científico de datos,1,Bucaramanga,47
+E0282,Científico de datos,1,Bucaramanga,40
+E0283,Analista de datos,3,Quito,28
+E0284,Ingeniero de ML,1,Barranquilla,36
+E0285,Desarrollador web,3,Cali,37
+E0286,Analista de datos,1,Barranquilla,33
+E0287,Ingeniero de ML,2,Medellín,33
+E0288,Desarrollador web,1,Barranquilla,19
+E0289,Desarrollador web,1,Medellín,32
+E0290,Científico de datos,1,Bogotá,29
+E0291,Ingeniero de ML,1,Ciudad de México,44
+E0292,Ingeniero de ML,3,Bogotá,45
+E0293,Científico de datos,1,Pereira,42
+E0294,Científico de datos,2,Ciudad de México,18
+E0295,Ingeniero de IA generativa,1,Ciudad de México,44
+E0296,Ingeniero de ML,1,Bucaramanga,30
+E0297,Ingeniero de ML,2,Medellín,31
+E0298,Desarrollador web,1,Santiago,48
+E0299,Analista de datos,3,Quito,45
+E0300,Ingeniero de IA generativa,2,Lima,19
+E0301,Desarrollador web,2,Bogotá,29
+E0302,Ingeniero de ML,1,Bogotá,41
+E0303,Ingeniero de ML,1,Barranquilla,35
+E0304,Ingeniero de IA generativa,3,Medellín,26
+E0305,Desarrollador web,1,Quito,34
+E0306,Ingeniero de IA generativa,1,Cali,45
+E0307,Científico de datos,1,Cali,25
+E0308,Desarrollador web,2,Santiago,41
+E0309,Analista de datos,2,Quito,41
+E0310,Científico de datos,2,Cali,46
+E0311,Analista de datos,2,Barranquilla,27
+E0312,Analista de datos,1,Pereira,24
+E0313,Científico de datos,3,Lima,35
+E0314,Ingeniero de ML,1,Santiago,35
+E0315,Desarrollador web,2,Quito,31
+E0316,Científico de datos,1,Santiago,42
+E0317,Ingeniero de ML,3,Bogotá,43
+E0318,Ingeniero de ML,1,Cali,25
+E0319,Ingeniero de ML,1,Pereira,43
+E0320,Ingeniero de IA generativa,1,Bogotá,25
+E0321,Desarrollador web,1,Barranquilla,31
+E0322,Científico de datos,1,Medellín,18
+E0323,Ingeniero de IA generativa,2,Santiago,28
+E0324,Desarrollador web,1,Bogotá,48
+E0325,Científico de datos,3,Medellín,32
+E0326,Desarrollador web,1,Medellín,40
+E0327,Científico de datos,2,Medellín,21
+E0328,Ingeniero de IA generativa,1,Pereira,38
+E0329,Analista de datos,2,Barranquilla,29
+E0330,Analista de datos,2,Santiago,41
+E0331,Científico de datos,1,Cali,47
+E0332,Desarrollador web,3,Pereira,35
+E0333,Científico de datos,1,Lima,21
+E0334,Científico de datos,1,Lima,33
+E0335,Científico de datos,2,Ciudad de México,21
+E0336,Desarrollador web,2,Cali,32
+E0337,Científico de datos,1,Pereira,19
+E0338,Ingeniero de IA generativa,1,Quito,38
+E0339,Analista de datos,3,Quito,27
+E0340,Científico de datos,2,Lima,24
+E0341,Científico de datos,3,Lima,18
+E0342,Científico de datos,2,Quito,46
+E0343,Analista de datos,2,Lima,44
+E0344,Desarrollador web,1,Santiago,43
+E0345,Científico de datos,3,Medellín,19
+E0346,Desarrollador web,1,Barranquilla,29
+E0347,Científico de datos,2,Medellín,49
+E0348,Desarrollador web,1,Bogotá,36
+E0349,Ingeniero de IA generativa,2,Bucaramanga,22
+E0350,Desarrollador web,2,Cali,22
+E0351,Analista de datos,2,Bucaramanga,26
+E0352,Desarrollador web,3,Bucaramanga,49
+E0353,Científico de datos,1,Lima,23
+E0354,Científico de datos,2,Santiago,46
+E0355,Científico de datos,1,Quito,39
+E0356,Analista de datos,1,Barranquilla,47
+E0357,Desarrollador web,1,Barranquilla,44
+E0358,Analista de datos,1,Ciudad de México,28
+E0359,Desarrollador web,1,Medellín,44
+E0360,Científico de datos,2,Pereira,23
+E0361,Desarrollador web,2,Bucaramanga,27
+E0362,Científico de datos,2,Medellín,24
+E0363,Científico de datos,1,Lima,22
+E0364,Desarrollador web,1,Barranquilla,20
+E0365,Ingeniero de IA generativa,1,Medellín,23
+E0366,Analista de datos,2,Lima,21
+E0367,Científico de datos,3,Medellín,30
+E0368,Analista de datos,1,Lima,20
+E0369,Científico de datos,2,Medellín,19
+E0370,Desarrollador web,1,Bucaramanga,49
+E0371,Desarrollador web,1,Quito,20
+E0372,Científico de datos,1,Cali,20
+E0373,Científico de datos,1,Ciudad de México,18
+E0374,Científico de datos,2,Ciudad de México,22
+E0375,Ingeniero de IA generativa,3,Santiago,34
+E0376,Ingeniero de ML,1,Medellín,44
+E0377,Desarrollador web,2,Ciudad de México,41
+E0378,Analista de datos,2,Santiago,36
+E0379,Analista de datos,3,Ciudad de México,20
+E0380,Científico de datos,2,Medellín,42
+E0381,Ingeniero de IA generativa,1,Quito,19
+E0382,Ingeniero de ML,2,Medellín,38
+E0383,Analista de datos,1,Pereira,31
+E0384,Analista de datos,3,Bucaramanga,46
+E0385,Analista de datos,1,Pereira,27
+E0386,Ingeniero de IA generativa,2,Pereira,38
+E0387,Científico de datos,1,Bogotá,32
+E0388,Analista de datos,1,Pereira,34
+E0389,Ingeniero de ML,3,Santiago,48
+E0390,Ingeniero de ML,2,Bucaramanga,40
+E0391,Científico de datos,1,Cali,31
+E0392,Científico de datos,3,Santiago,32
+E0393,Científico de datos,3,Bogotá,40
+E0394,Ingeniero de ML,1,Bucaramanga,29
+E0395,Ingeniero de ML,2,Pereira,23
+E0396,Analista de datos,1,Bucaramanga,32
+E0397,Analista de datos,2,Santiago,20
+E0398,Ingeniero de ML,1,Bucaramanga,23
+E0399,Ingeniero de ML,1,Santiago,31
+E0400,Científico de datos,3,Bogotá,43
+E0401,Analista de datos,3,Ciudad de México,43
+E0402,Ingeniero de ML,2,Pereira,26
+E0403,Científico de datos,3,Cali,31
+E0404,Ingeniero de ML,2,Cali,22
+E0405,Ingeniero de ML,2,Ciudad de México,42
+E0406,Científico de datos,2,Lima,25
+E0407,Analista de datos,1,Lima,43
+E0408,Analista de datos,1,Bogotá,44
+E0409,Desarrollador web,1,Pereira,40
+E0410,Analista de datos,2,Santiago,28
+E0411,Analista de datos,1,Bogotá,48
+E0412,Ingeniero de ML,1,Bucaramanga,39
+E0413,Desarrollador web,2,Bucaramanga,38
+E0414,Analista de datos,1,Quito,45
+E0415,Ingeniero de ML,1,Cali,46
+E0416,Analista de datos,2,Bucaramanga,20
+E0417,Ingeniero de ML,3,Ciudad de México,46
+E0418,Analista de datos,1,Bogotá,42
+E0419,Desarrollador web,1,Quito,24
+E0420,Desarrollador web,1,Quito,27
+E0421,Ingeniero de IA generativa,2,Ciudad de México,42
+E0422,Analista de datos,2,Lima,24
+E0423,Analista de datos,1,Ciudad de México,32
+E0424,Desarrollador web,2,Ciudad de México,40
+E0425,Ingeniero de ML,1,Santiago,38
+E0426,Desarrollador web,1,Bucaramanga,47
+E0427,Ingeniero de ML,3,Bucaramanga,21
+E0428,Científico de datos,1,Lima,27
+E0429,Científico de datos,1,Medellín,49
+E0430,Desarrollador web,1,Quito,36
+E0431,Científico de datos,2,Ciudad de México,25
+E0432,Científico de datos,3,Lima,27
+E0433,Ingeniero de ML,3,Barranquilla,28
+E0434,Científico de datos,1,Barranquilla,35
+E0435,Ingeniero de ML,1,Bucaramanga,27
+E0436,Desarrollador web,2,Lima,37
+E0437,Científico de datos,1,Ciudad de México,32
+E0438,Desarrollador web,3,Lima,37
+E0439,Desarrollador web,2,Santiago,22
+E0440,Ingeniero de ML,1,Santiago,37
+E0441,Científico de datos,2,Ciudad de México,47
+E0442,Analista de datos,1,Barranquilla,22
+E0443,Científico de datos,1,Pereira,28
+E0444,Ingeniero de ML,2,Bucaramanga,40
+E0445,Ingeniero de IA generativa,2,Lima,37
+E0446,Ingeniero de IA generativa,2,Quito,39
+E0447,Desarrollador web,2,Barranquilla,35
+E0448,Ingeniero de ML,3,Pereira,39
+E0449,Analista de datos,3,Bogotá,37
+E0450,Desarrollador web,2,Ciudad de México,20
+E0451,Ingeniero de ML,1,Bucaramanga,42
+E0452,Analista de datos,2,Bucaramanga,32
+E0453,Científico de datos,3,Pereira,19
+E0454,Científico de datos,1,Cali,31
+E0455,Analista de datos,1,Pereira,31
+E0456,Científico de datos,1,Ciudad de México,20
+E0457,Científico de datos,1,Barranquilla,49
+E0458,Desarrollador web,2,Medellín,25
+E0459,Ingeniero de IA generativa,1,Barranquilla,28
+E0460,Analista de datos,2,Medellín,32
+E0461,Desarrollador web,2,Barranquilla,44
+E0462,Ingeniero de IA generativa,2,Lima,41
+E0463,Científico de datos,1,Medellín,42
+E0464,Ingeniero de ML,1,Ciudad de México,25
+E0465,Ingeniero de ML,2,Cali,45
+E0466,Científico de datos,2,Quito,44
+E0467,Desarrollador web,1,Ciudad de México,32
+E0468,Ingeniero de ML,3,Cali,35
+E0469,Ingeniero de ML,1,Pereira,19
+E0470,Científico de datos,3,Medellín,42
+E0471,Científico de datos,1,Bogotá,48
+E0472,Ingeniero de IA generativa,1,Santiago,33
+E0473,Científico de datos,2,Quito,35
+E0474,Científico de datos,1,Medellín,33
+E0475,Científico de datos,1,Cali,20
+E0476,Ingeniero de ML,1,Medellín,37
+E0477,Analista de datos,1,Barranquilla,41
+E0478,Ingeniero de ML,2,Cali,47
+E0479,Científico de datos,1,Barranquilla,47
+E0480,Científico de datos,2,Pereira,33
+E0481,Desarrollador web,2,Medellín,48
+E0482,Analista de datos,1,Quito,34
+E0483,Analista de datos,1,Ciudad de México,38
+E0484,Analista de datos,3,Ciudad de México,37
+E0485,Desarrollador web,2,Medellín,49
+E0486,Científico de datos,2,Ciudad de México,41
+E0487,Ingeniero de ML,2,Quito,21
+E0488,Analista de datos,1,Medellín,20
+E0489,Ingeniero de ML,1,Ciudad de México,31
+E0490,Desarrollador web,2,Barranquilla,34
+E0491,Ingeniero de ML,1,Ciudad de México,39
+E0492,Desarrollador web,2,Bucaramanga,33
+E0493,Desarrollador web,2,Quito,34
+E0494,Analista de datos,2,Medellín,47
+E0495,Ingeniero de IA generativa,1,Barranquilla,28
+E0496,Analista de datos,1,Cali,33
+E0497,Desarrollador web,1,Cali,35
+E0498,Ingeniero de ML,1,Barranquilla,32
+E0499,Ingeniero de ML,2,Barranquilla,48
+E0500,Analista de datos,1,Medellín,48
+E0501,Científico de datos,1,Ciudad de México,34
+E0502,Ingeniero de ML,1,Pereira,32
+E0503,Ingeniero de IA generativa,1,Quito,36
+E0504,Analista de datos,2,Ciudad de México,23
+E0505,Científico de datos,1,Medellín,31
+E0506,Ingeniero de ML,3,Bogotá,24
+E0507,Científico de datos,1,Bucaramanga,22
+E0508,Científico de datos,2,Bucaramanga,21
+E0509,Ingeniero de IA generativa,1,Cali,36
+E0510,Ingeniero de ML,1,Ciudad de México,18
+E0511,Ingeniero de ML,3,Pereira,38
+E0512,Analista de datos,3,Ciudad de México,31
+E0513,Científico de datos,3,Medellín,29
+E0514,Científico de datos,1,Quito,42
+E0515,Desarrollador web,1,Cali,35
+E0516,Analista de datos,2,Bucaramanga,41
+E0517,Ingeniero de IA generativa,1,Bucaramanga,40
+E0518,Analista de datos,2,Quito,19
+E0519,Ingeniero de ML,2,Cali,24
+E0520,Desarrollador web,2,Cali,36
+E0521,Ingeniero de IA generativa,2,Barranquilla,49
+E0522,Desarrollador web,2,Barranquilla,22
+E0523,Ingeniero de IA generativa,1,Medellín,21
+E0524,Desarrollador web,1,Medellín,48
+E0525,Desarrollador web,2,Cali,48
+E0526,Científico de datos,1,Bucaramanga,23
+E0527,Desarrollador web,1,Barranquilla,30
+E0528,Ingeniero de ML,1,Barranquilla,38
+E0529,Analista de datos,2,Ciudad de México,24
+E0530,Analista de datos,2,Cali,28
+E0531,Ingeniero de IA generativa,2,Santiago,30
+E0532,Ingeniero de IA generativa,1,Ciudad de México,38
+E0533,Científico de datos,1,Medellín,27
+E0534,Desarrollador web,2,Barranquilla,31
+E0535,Desarrollador web,1,Medellín,27
+E0536,Ingeniero de ML,2,Cali,42
+E0537,Científico de datos,2,Barranquilla,22
+E0538,Científico de datos,1,Medellín,25
+E0539,Desarrollador web,1,Bogotá,25
+E0540,Ingeniero de ML,1,Bucaramanga,46
+E0541,Ingeniero de IA generativa,3,Ciudad de México,48
+E0542,Ingeniero de ML,2,Barranquilla,34
+E0543,Ingeniero de IA generativa,1,Quito,23
+E0544,Ingeniero de ML,3,Barranquilla,42
+E0545,Desarrollador web,1,Santiago,33
+E0546,Científico de datos,1,Cali,45
+E0547,Analista de datos,3,Pereira,29
+E0548,Desarrollador web,1,Ciudad de México,49
+E0549,Ingeniero de IA generativa,1,Bogotá,43
+E0550,Desarrollador web,2,Santiago,25
+E0551,Científico de datos,1,Barranquilla,41
+E0552,Ingeniero de ML,2,Bucaramanga,27
+E0553,Científico de datos,1,Lima,29
+E0554,Científico de datos,1,Lima,26
+E0555,Analista de datos,1,Bogotá,39
+E0556,Desarrollador web,1,Quito,26
+E0557,Desarrollador web,1,Lima,38
+E0558,Desarrollador web,1,Santiago,36
+E0559,Desarrollador web,3,Bucaramanga,42
+E0560,Desarrollador web,1,Lima,49
+E0561,Científico de datos,1,Bucaramanga,18
+E0562,Científico de datos,1,Quito,49
+E0563,Analista de datos,1,Quito,21
+E0564,Desarrollador web,1,Santiago,34
+E0565,Científico de datos,2,Pereira,28
+E0566,Analista de datos,1,Ciudad de México,38
+E0567,Analista de datos,3,Barranquilla,41
+E0568,Científico de datos,3,Bucaramanga,45
+E0569,Ingeniero de ML,1,Ciudad de México,30
+E0570,Desarrollador web,1,Bogotá,47
+E0571,Analista de datos,1,Ciudad de México,28
+E0572,Científico de datos,2,Bogotá,24
+E0573,Desarrollador web,1,Pereira,30
+E0574,Ingeniero de ML,3,Bucaramanga,34
+E0575,Desarrollador web,2,Bucaramanga,39
+E0576,Científico de datos,2,Bucaramanga,44
+E0577,Analista de datos,2,Bucaramanga,25
+E0578,Ingeniero de ML,3,Bucaramanga,27
+E0579,Científico de datos,1,Bucaramanga,48
+E0580,Desarrollador web,1,Pereira,32
+E0581,Científico de datos,1,Ciudad de México,25
+E0582,Científico de datos,3,Pereira,49
+E0583,Ingeniero de ML,2,Lima,32
+E0584,Desarrollador web,2,Quito,49
+E0585,Desarrollador web,1,Santiago,47
+E0586,Ingeniero de IA generativa,3,Medellín,46
+E0587,Científico de datos,1,Ciudad de México,36
+E0588,Ingeniero de ML,1,Cali,43
+E0589,Científico de datos,3,Medellín,48
+E0590,Analista de datos,1,Ciudad de México,26
+E0591,Ingeniero de IA generativa,1,Bogotá,19
+E0592,Desarrollador web,2,Quito,28
+E0593,Analista de datos,1,Ciudad de México,38
+E0594,Ingeniero de ML,1,Santiago,35
+E0595,Ingeniero de IA generativa,1,Lima,20
+E0596,Ingeniero de ML,1,Quito,35
+E0597,Científico de datos,3,Medellín,23
+E0598,Ingeniero de ML,2,Quito,34
+E0599,Científico de datos,1,Medellín,36
+E0600,Científico de datos,1,Barranquilla,38
