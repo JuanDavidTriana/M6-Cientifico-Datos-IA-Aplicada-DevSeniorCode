@@ -1,0 +1,29 @@
+# Levanta los dos servicios para compararlos:  docker compose up --build
+#   modelo-base       -> http://localhost:8001  (Keras .h5, sin optimizar)
+#   modelo-optimizado -> http://localhost:8002  (TFLite podado + cuantizado)
+services:
+  modelo-base:
+    build: ./servicio_baseline
+    container_name: clase02-modelo-base
+    ports: ["8001:8000"]
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 3s
+      start_period: 30s
+      retries: 3
+
+  modelo-optimizado:
+    build: ./servicio_optimizado
+    container_name: clase02-modelo-optimizado
+    ports: ["8002:8000"]
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 3s
+      start_period: 20s
+      retries: 3

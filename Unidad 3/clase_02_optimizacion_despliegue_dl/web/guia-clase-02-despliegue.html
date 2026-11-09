@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía docente · Clase 2 · Despliegue de Deep Learning</title>
+<style>
+  :root{--bg:#fafaf7;--fg:#1d2330;--mut:#5d6677;--card:#fff;--line:#e3e5ea;--acc:#1f6f5c;--acc2:#e8f3ef;--warn:#fff4e0;--warnb:#e0a030;--code:#0f1724}
+  @media (prefers-color-scheme:dark){:root{--bg:#12151c;--fg:#e8eaf0;--mut:#9aa3b5;--card:#1a1f2a;--line:#2b3242;--acc:#58c4a4;--acc2:#16302b;--warn:#2b2412;--warnb:#c99a3a}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  header,main{max-width:900px;margin:0 auto;padding:0 16px}
+  header{padding-top:32px}
+  h1{font-size:1.7rem;margin:.2em 0}
+  h2{font-size:1.25rem;margin:2.2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+  p.sub{color:var(--mut);margin:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+  .say{background:var(--acc2);border-left:4px solid var(--acc)}
+  .warn{background:var(--warn);border-left:4px solid var(--warnb)}
+  .tag{display:inline-block;font-size:.75rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--acc);margin-bottom:4px}
+  .warn .tag{color:var(--warnb)}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600}
+  pre{background:var(--code);color:#e6edf3;padding:12px 14px;border-radius:8px;overflow-x:auto;font-size:.85rem;line-height:1.45}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em}
+  :not(pre)>code{background:var(--acc2);padding:1px 5px;border-radius:4px}
+  label.chk{display:block;padding:3px 0;cursor:pointer}
+  #clock{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 16px;z-index:5}
+  #clock .in{max-width:900px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  button{font:inherit;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+  button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+  .time{font-variant-numeric:tabular-nums;font-weight:600}
+  tr.now td{background:var(--acc2)}
+</style>
+</head>
+<body>
+<div id="clock"><div class="in">
+  <button id="go">▶ Iniciar clase</button><span class="time" id="el">0:00</span>
+  <span style="color:var(--mut)">Ahora: <b id="cur">—</b></span>
+</div></div>
+
+<header>
+  <p class="sub">Unidad 3 · Clase 2 · ≈ 4 h</p>
+  <h1>Optimización y despliegue de modelos de Deep Learning</h1>
+  <p class="sub">Idea de la clase: <b>no se entrena nada</b>. El modelo llega hecho; los estudiantes aprenden a medirlo, servirlo, empaquetarlo y llevarlo a un servidor.</p>
+</header>
+
+<main>
+<h2>Agenda</h2>
+<table id="agenda">
+  <tr><th>Min</th><th>Sección (notebook)</th><th>Resultado esperado</th></tr>
+  <tr data-s="0" data-e="20"><td>0–20</td><td>0–1 · Setup y del notebook a producción</td><td>Entienden por qué un modelo "que funciona" no está listo</td></tr>
+  <tr data-s="20" data-e="55"><td>20–55</td><td>2 · Medir antes de decidir</td><td>Tabla de tamaño / accuracy / latencia de los 3 artefactos</td></tr>
+  <tr data-s="55" data-e="75"><td>55–75</td><td>3 · Pruning y quantization (verificar, no reentrenar)</td><td>~50 % de pesos en cero; TFLite dinámica vs float16</td></tr>
+  <tr data-s="75" data-e="85"><td>75–85</td><td>☕ Pausa</td><td>Lanzar <code>docker build</code> en segundo plano</td></tr>
+  <tr data-s="85" data-e="135"><td>85–135</td><td>4 · API con FastAPI (live coding)</td><td><code>/health</code> y <code>/predict</code> funcionando, errores 422</td></tr>
+  <tr data-s="135" data-e="160"><td>135–160</td><td>5 · <code>.env</code> y secretos</td><td>401 sin clave, 200 con clave</td></tr>
+  <tr data-s="160" data-e="200"><td>160–200</td><td>6–7 · Docker y docker compose (terminal)</td><td>Contenedor <i>healthy</i>; benchmark base vs optimizado</td></tr>
+  <tr data-s="200" data-e="220"><td>200–220</td><td>8 · SSH</td><td>Par de llaves, qué es público y qué no</td></tr>
+  <tr data-s="220" data-e="240"><td>220–240</td><td>9 · Checklist, retos y puente</td><td>Se llevan la checklist y los retos</td></tr>
+</table>
+
+<h2>Antes de clase (15 min)</h2>
+<div class="card">
+  <label class="chk"><input type="checkbox"> <code>pip install -r requirements.txt</code> y abrir el notebook DOCENTE: ejecutar todo una vez.</label>
+  <label class="chk"><input type="checkbox"> <code>docker --version</code> funciona y Docker Desktop está arriba.</label>
+  <label class="chk"><input type="checkbox"> Hacer un <code>docker build</code> de prueba (el primero descarga TensorFlow: varios minutos).</label>
+  <label class="chk"><input type="checkbox"> <code>ssh-keygen</code> disponible en la terminal (Git Bash en Windows).</label>
+  <label class="chk"><input type="checkbox"> Revisar que los puertos 8000, 8001, 8002, 8010 y 8011 estén libres.</label>
+</div>
+
+<h2>1 · Del notebook a producción</h2>
+<div class="card say"><span class="tag">Dilo así</span>
+"Entrenar es cocinar un plato gourmet con todo el tiempo del mundo. Desplegar es servirlo en un local de comida rápida: sale en segundos y sabe igual en cada pedido."</div>
+<p>Pregunta de apertura (3 min): ¿qué pasaría si el reconocimiento facial de un celular tardara 3 segundos? Insistir en que hoy <b>el modelo ya viene hecho</b>.</p>
+
+<h2>2 · Medir antes de decidir</h2>
+<div class="card say"><span class="tag">Dilo así</span>
+"Optimizar sin medir es adivinar. Tres números mandan: tamaño, accuracy y latencia."</div>
+<p>Celda clave: <code>evaluar_tflite</code> — la lógica <code>set_tensor → invoke → get_tensor</code> es la misma que luego va en <code>model_utils.py</code>.</p>
+<div class="card warn"><span class="tag">Ojo</span>
+El speed-up es enorme porque <code>model.predict()</code> tiene mucho <i>overhead</i> por llamada. Parte de la ganancia es usar la herramienta correcta para servir, no solo la cuantización. Con 1 000 imágenes, ±0.5 pts de accuracy es ruido.</div>
+
+<h2>3 · Pruning y quantization</h2>
+<div class="card say"><span class="tag">Dilo así</span>
+"Pruning: apagar conexiones que casi no aportan. Quantization: guardar los números con menos dígitos, como pasar una foto a JPEG."</div>
+<p>Conversión en vivo (rápida, no reentrena): sin cuantizar ≈ 417 KB → dinámica ≈ 111 KB → float16 ≈ 212 KB. Distillation se explica solo como concepto.</p>
+
+<h2>4 · FastAPI</h2>
+<p>Live coding en 3 pasos: (1) solo <code>/health</code>; (2) <code>/predict</code>; (3) los errores 503 y 422. Si el tiempo aprieta, entregar el <code>main.py</code> ya escrito y comentarlo.</p>
+<div class="card say"><span class="tag">Dilo así</span>
+"El modelo se carga una vez, al arrancar. Cargarlo en cada petición es el error número uno."</div>
+<p>Mostrar <code>/docs</code> (documentación autogenerada). La latencia que ve el cliente (≈ 2 ms) es mucho mayor que la interna (≈ 0.05 ms): serialización + red + framework.</p>
+
+<h2>5 · .env y secretos</h2>
+<div class="card say"><span class="tag">Pregunta</span>
+¿Por qué es un error <code>COPY .env .</code> en el Dockerfile? → La imagen queda atada a un entorno y el secreto queda en las capas, visible aunque luego lo borres.</div>
+
+<h2>6–7 · Docker y compose (en terminal)</h2>
+<pre># API sola
+cd despliegue/01_api_fastapi_docker
+docker build -t clase02-inference-api .
+cp .env.example .env
+docker run -d --name api --env-file .env -p 8000:8000 clase02-inference-api
+docker ps                    # esperar "healthy"
+python test_api.py
+docker logs api
+docker stop api && docker rm api
+
+# Base vs optimizado
+cd ../02_benchmark_compose
+docker compose up --build -d
+python benchmark/compare.py --n 200
+docker compose down</pre>
+<div class="card warn"><span class="tag">Si falla</span>
+<table>
+<tr><td><code>port is already allocated</code></td><td>Otro proceso usa el puerto: cambiar <code>-p 8000:8000</code> por <code>-p 8100:8000</code>.</td></tr>
+<tr><td>Contenedor "unhealthy"</td><td><code>docker logs api</code>: casi siempre falta <code>model/modelo_optimizado.tflite</code>.</td></tr>
+<tr><td><code>401</code> en <code>test_api.py</code></td><td>El <code>.env</code> tiene <code>API_KEY</code>: <code>python test_api.py --api-key LA_CLAVE</code>.</td></tr>
+<tr><td>Build muy lento</td><td>Es la descarga de TensorFlow; la 2.ª vez usa caché. Plan B: Play with Docker o Codespaces.</td></tr>
+<tr><td>Imagen &gt; 1 GB</td><td>Normal: es TensorFlow completo. Es el reto 3 (<code>ai-edge-litert</code>).</td></tr>
+</table></div>
+
+<h2>8 · SSH</h2>
+<div class="card say"><span class="tag">Dilo así</span>
+"La llave pública es un candado que le das al servidor; la privada es la única llave que lo abre, y nunca sale de tu bolsillo."</div>
+<p>Demo opcional: buscar "GitHub secret scanning" para mostrar que una llave privada o un <code>.env</code> subido a un repo público se detecta y se revoca.</p>
+
+<h2>9 · Cierre</h2>
+<p>Repasar la checklist del notebook y asignar los retos. Pregunta puente a la siguiente clase: <i>si la API recibiera 10 000 peticiones por segundo, ¿qué cambiaría? ¿y si el entrenamiento viviera en Databricks?</i></p>
+</main>
+<div style="height:48px"></div>
+
+<script>
+(function(){
+  var rows=[].slice.call(document.querySelectorAll('#agenda tr[data-s]'));
+  var go=document.getElementById('go'),el=document.getElementById('el'),cur=document.getElementById('cur');
+  var t0=null,timer=null;
+  function pad(n){return n<10?'0'+n:''+n}
+  function tick(){
+    var m=(Date.now()-t0)/60000;
+    el.textContent=Math.floor(m/60)+':'+pad(Math.floor(m%60));
+    var name='Fuera de agenda';
+    rows.forEach(function(r){
+      var on=m>=+r.dataset.s&&m<+r.dataset.e;
+      r.className=on?'now':'';
+      if(on)name=r.cells[1].textContent;
+    });
+    cur.textContent=name;
+  }
+  go.onclick=function(){
+    if(timer){clearInterval(timer);timer=null;go.textContent='▶ Iniciar clase';go.className='';return}
+    t0=Date.now();tick();timer=setInterval(tick,1000);go.textContent='⏹ Detener';go.className='on';
+  };
+})();
+</script>
+</body>
+</html>
