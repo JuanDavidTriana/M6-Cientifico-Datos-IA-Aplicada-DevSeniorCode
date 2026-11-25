@@ -1,0 +1,39 @@
+radicado,fecha,canal,texto,tipo,area,urgencia
+PQR-2026-0001,2026-11-03,web,"Desde el lunes no tenemos luz en el barrio Kennedy, en mi casa vive mi mamá que usa oxígeno y nadie nos da respuesta. Exijo solución inmediata.",queja,tecnica,alta
+PQR-2026-0002,2026-11-03,correo,Me llegó la factura de octubre por $480.000 cuando siempre pago alrededor de $120.000. Solicito revisión del medidor y reliquidación. Cédula 1.023.456.789.,reclamo,facturacion,media
+PQR-2026-0003,2026-11-04,web,Quisiera saber qué documentos necesito para cambiar el titular del servicio a nombre de mi esposa.,peticion,atencion_cliente,baja
+PQR-2026-0004,2026-11-04,app,"Sería bueno que la app permitiera pagar con Nequi, así no tendría que ir a un punto físico.",sugerencia,atencion_cliente,baja
+PQR-2026-0005,2026-11-04,web,"Quiero felicitar al técnico Jorge Ramírez, llegó puntual y resolvió el daño del internet en media hora.",felicitacion,atencion_cliente,baja
+PQR-2026-0006,2026-11-04,telefono,Denuncio que un supuesto funcionario de ServiRed está cobrando $50.000 en efectivo por reconectar el servicio en el barrio Bosa La Libertad.,denuncia,juridica,alta
+PQR-2026-0007,2026-11-04,app,"Llevamos dos días sin energía en Kennedy Central, se nos dañó toda la comida de la nevera.",queja,tecnica,alta
+PQR-2026-0008,2026-11-05,web,"Otra vez sin luz en el sector de Kennedy, ya van más de 40 horas. ¿Cuándo piensan arreglar?",queja,tecnica,alta
+PQR-2026-0009,2026-11-05,correo,"Barrio Kennedy sin servicio de energía desde el lunes, tengo un hijo menor con fiebre y no puedo refrigerar la medicina.",queja,tecnica,alta
+PQR-2026-0010,2026-11-05,web,"Pagué la factura el 5 de noviembre en Efecty y aparece como pendiente, además me cobraron intereses de mora. Adjunto comprobante.",reclamo,facturacion,media
+PQR-2026-0011,2026-11-06,app,"Solicito el traslado del servicio de internet a mi nueva dirección en la Calle 45 # 12-30, Medellín.",peticion,tecnica,baja
+PQR-2026-0012,2026-11-06,telefono,Llamé cinco veces a la línea de atención y siempre me cuelgan después de 20 minutos de espera. Pésimo servicio.,queja,atencion_cliente,media
+PQR-2026-0013,2026-11-06,correo,Me suspendieron el servicio por no pago pero tengo un acuerdo de pago vigente firmado el 20 de octubre. Soy adulto mayor y necesito la luz para mi nebulizador.,reclamo,facturacion,alta
+PQR-2026-0014,2026-11-09,correo,En ejercicio del derecho de petición (artículo 23 de la Constitución) solicito copia de todas las facturas emitidas a mi nombre en 2025.,peticion,juridica,media
+PQR-2026-0015,2026-11-09,web,"El internet se cae todas las noches entre las 8 y las 11 pm, trabajo desde casa y esto me está afectando.",queja,tecnica,media
+PQR-2026-0016,2026-11-09,app,Deberían avisar por mensaje de texto cuando hagan mantenimientos programados.,sugerencia,tecnica,baja
+PQR-2026-0017,2026-11-10,web,No reconozco el cobro de 'asistencia hogar' por $15.900 que aparece en mi factura. Nunca lo contraté.,reclamo,facturacion,media
+PQR-2026-0018,2026-11-10,telefono,"Un poste de energía está a punto de caerse frente al colegio San José en Suba, hay cables sueltos. Es un peligro para los niños.",queja,tecnica,alta
+PQR-2026-0019,2026-11-10,web,¿Cuál es el horario de la oficina de atención en Chapinero?,peticion,atencion_cliente,baja
+PQR-2026-0020,2026-11-11,correo,"Mis datos personales aparecen en una base de datos de cobranza de un tercero, creo que ServiRed los vendió sin mi autorización.",denuncia,juridica,alta
+PQR-2026-0021,2026-11-11,web,"Muy buena la atención en la oficina de Suba, la asesora Marcela Torres fue muy amable.",felicitacion,atencion_cliente,baja
+PQR-2026-0022,2026-11-11,correo,El técnico vino a instalar el módem y dañó la pared de mi apartamento. Solicito que respondan por el daño.,reclamo,tecnica,media
+PQR-2026-0023,2026-11-12,telefono,"Me prometieron una visita técnica para el jueves y nunca llegaron, perdí el día de trabajo esperando.",queja,atencion_cliente,media
+PQR-2026-0024,2026-11-12,app,Sin internet en todo Chapinero Alto desde esta mañana.,queja,tecnica,media
+PQR-2026-0025,2026-11-12,web,"En Chapinero no hay internet desde temprano, ¿es una falla general?",queja,tecnica,media
+PQR-2026-0026,2026-11-12,web,"Hoy no hay internet en Chapinero Alto, necesito saber cuándo vuelve.",queja,tecnica,media
+PQR-2026-0027,2026-11-13,correo,Me cobraron la reconexión dos veces en la misma factura.,reclamo,facturacion,media
+PQR-2026-0028,2026-11-13,web,"Solicito un acuerdo de pago para la deuda de $860.000, puedo pagar en 6 cuotas.",peticion,facturacion,baja
+PQR-2026-0029,2026-11-13,telefono,"Voy a interponer una acción de tutela si no me restablecen el servicio hoy, tengo una persona en condición de discapacidad en casa.",queja,tecnica,alta
+PQR-2026-0030,2026-11-17,app,La factura debería mostrar el consumo de los últimos 12 meses en una gráfica más clara.,sugerencia,facturacion,baja
+PQR-2026-0031,2026-11-17,web,Quiero aumentar la velocidad de mi plan de internet de 100 a 300 megas.,peticion,tecnica,baja
+PQR-2026-0032,2026-11-17,correo,Me están cobrando una deuda de un inquilino anterior y me amenazan con reportarme a Datacrédito.,reclamo,facturacion,alta
+PQR-2026-0033,2026-11-18,web,El chat de la página web nunca responde.,queja,atencion_cliente,baja
+PQR-2026-0034,2026-11-18,web,Gracias por arreglar tan rápido el transformador del barrio Las Ferias.,felicitacion,tecnica,baja
+PQR-2026-0035,2026-11-18,telefono,"Hay una conexión ilegal de energía en el lote de la Carrera 80 con Calle 6, están robando energía.",denuncia,juridica,media
+PQR-2026-0036,2026-11-19,correo,Solicito certificado de paz y salvo del servicio para vender mi casa.,peticion,juridica,baja
+PQR-2026-0037,2026-11-19,telefono,"El medidor hace un ruido extraño y huele a quemado, me da miedo que se incendie.",queja,tecnica,alta
+PQR-2026-0038,2026-11-20,web,"No es una queja, solo quiero saber si puedo pagar la factura con tarjeta de crédito.",peticion,facturacion,baja
