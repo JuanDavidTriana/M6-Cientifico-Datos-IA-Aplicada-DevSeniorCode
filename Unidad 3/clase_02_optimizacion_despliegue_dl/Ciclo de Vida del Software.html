@@ -1,0 +1,458 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ciclo de Vida del Software</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sidebar de fases (sticky) + lectura continua; en móvil la barra de fases pasa arriba */
+:root{
+  --bg:#F2F4F7; --surface:#FFFFFF; --ink:#142033; --muted:#566377; --line:#D8DEE7;
+  --accent:#2B4BEE; --accent-ink:#FFFFFF;
+  --good:#1D7A4E; --good-bg:#E3F4EB; --bad:#B3261E; --bad-bg:#FBE9E7;
+  --tone-l:0.50; --tone-c:0.16; --soft-l:0.95; --soft-c:0.035;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'Schibsted Grotesk','Segoe UI',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1620; --surface:#172130; --ink:#E7ECF3; --muted:#9AA7B8; --line:#263447;
+    --accent:#8197FF; --accent-ink:#0F1620;
+    --good:#5CD39A; --good-bg:#12301F; --bad:#FF9A90; --bad-bg:#3A1A18;
+    --tone-l:0.78; --tone-c:0.12; --soft-l:0.28; --soft-c:0.05; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1620; --surface:#172130; --ink:#E7ECF3; --muted:#9AA7B8; --line:#263447;
+  --accent:#8197FF; --accent-ink:#0F1620;
+  --good:#5CD39A; --good-bg:#12301F; --bad:#FF9A90; --bad-bg:#3A1A18;
+  --tone-l:0.78; --tone-c:0.12; --soft-l:0.28; --soft-c:0.05; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-block:28px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Hero */
+.hero{display:flex;flex-direction:column;gap:18px;padding-bottom:28px;max-width:860px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,6vw,56px);line-height:1.05;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lead{margin:0;max-width:64ch;color:var(--muted);font-size:17px}
+.tools{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center}
+.search{flex:1 1 280px;max-width:420px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 12px}
+.search input{flex:1;min-width:0;border:0;background:transparent;padding:11px 0;outline:none}
+.search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.search svg{flex:none;color:var(--muted)}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);min-width:9ch}
+.prog{flex:1 1 240px;max-width:360px;display:flex;flex-direction:column;gap:6px}
+.prog-top{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted)}
+.prog-top b{color:var(--ink);font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .3s}
+.linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+
+/* Navegación */
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:48px;align-items:start}
+.side{position:sticky;top:calc(16px + env(safe-area-inset-top,0px))}
+.side ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.side a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-weight:500;font-size:15px}
+.side a:hover{background:var(--surface);color:var(--ink)}
+.side a .n{font-family:var(--f-mono);font-size:12px;width:1.6em;color:oklch(var(--tone-l) var(--tone-c) var(--h))}
+.side a.on{background:oklch(var(--soft-l) var(--soft-c) var(--h));color:var(--ink)}
+.side a .chk{margin-left:auto;font-size:13px;color:var(--good);visibility:hidden}
+.side a.done .chk{visibility:visible}
+
+/* Fases */
+.phases{display:flex;flex-direction:column;gap:80px;min-width:0}
+.phase{--pc:oklch(var(--tone-l) var(--tone-c) var(--h));--pbg:oklch(var(--soft-l) var(--soft-c) var(--h));
+  display:flex;flex-direction:column;gap:30px;scroll-margin-top:calc(24px + env(safe-area-inset-top,0px));min-width:0}
+.ph{border-top:2px solid var(--pc);padding-top:14px;display:flex;flex-direction:column;gap:6px}
+.ph .num{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pc)}
+h2{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,4vw,38px);line-height:1.1;letter-spacing:-.015em;margin:0;text-wrap:balance}
+.ph p{margin:0;color:var(--muted);max-width:62ch}
+.group{display:flex;flex-direction:column;gap:12px;min-width:0}
+h3{font-family:var(--f-display);font-weight:600;font-size:20px;margin:0;text-wrap:balance}
+.note{margin:0;color:var(--muted);font-size:14px;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;gap:14px;min-width:0}
+.item .k{font-family:var(--f-mono);font-weight:500;font-size:30px;line-height:1;color:var(--pc);flex:none;width:.8em}
+.item h4{margin:0;font-size:16px;font-weight:600;line-height:1.3}
+.item p{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.item>div{min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-family:var(--f-mono);font-size:11.5px;padding:2px 7px;border-radius:6px;background:var(--pbg);color:var(--ink)}
+.flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.flow li{padding:7px 12px;border-radius:8px;background:var(--pbg);font-weight:600;font-size:14px}
+.flow li:not(:last-child)::after{content:"→";margin-left:12px;color:var(--pc)}
+
+/* Pestañas */
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 14px;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted)}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--pc);border-color:var(--pc);color:var(--bg)}
+.panel{display:none;flex-direction:column;gap:10px}
+.panel.on{display:flex}
+.plabel{display:none;margin:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.searching .tabs{display:none}
+.searching .panel{display:flex}
+.searching .plabel{display:block}
+
+/* Tabla */
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.seg span{font-size:13px;color:var(--muted);margin-right:4px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td:first-child{font-weight:600}
+td{transition:opacity .2s,background .2s}
+table[data-hl="aws"] td[data-p]:not([data-p="aws"]),table[data-hl="azure"] td[data-p]:not([data-p="azure"]),table[data-hl="gcp"] td[data-p]:not([data-p="gcp"]){opacity:.3}
+table[data-hl="aws"] td[data-p="aws"],table[data-hl="azure"] td[data-p="azure"],table[data-hl="gcp"] td[data-p="gcp"]{background:var(--pbg)}
+
+/* Comprobación */
+.foot{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.quiz{background:var(--pbg);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.qlabel{margin:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--pc)}
+.q{margin:0;font-weight:600;font-size:17px;max-width:60ch}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.opt{text-align:left;padding:10px 12px;border:1px solid var(--line);background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px}
+.opt:hover:not(:disabled){border-color:var(--pc)}
+.opt.ok{border-color:var(--good);background:var(--good-bg);color:var(--ink)}
+.opt.no{border-color:var(--bad);background:var(--bad-bg);color:var(--ink);opacity:.75}
+.opt:disabled{cursor:default}
+.fb{margin:0;font-size:14.5px;max-width:64ch}
+.donebtn{justify-self:start;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:99px;padding:8px 18px;cursor:pointer;font-weight:600;font-size:14px}
+.donebtn:hover{background:var(--ink);color:var(--bg)}
+.donebtn.is{background:var(--good);border-color:var(--good);color:var(--bg)}
+.empty{display:none;padding:32px 0;color:var(--muted)}
+.searching.none .empty{display:block}
+
+@media (max-width:899px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:20px}
+  .side{top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;border-bottom:1px solid var(--line)}
+  .side ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .side a{white-space:nowrap;padding:7px 10px}
+  .side a .chk{margin-left:2px}
+  .phase{scroll-margin-top:calc(72px + env(safe-area-inset-top,0px))}
+}
+</style>
+
+<div class="wrap" id="root">
+  <header class="hero">
+    <p class="eyebrow">Material de clase · Desarrollo de software · 8 fases</p>
+    <h1>Ciclo de vida del software en la industria</h1>
+    <p class="lead">Recorre las 8 fases que sigue un producto real, desde el diseño del código hasta el dominio que lo publica. Lee cada fase, responde la pregunta de comprobación y márcala como estudiada.</p>
+    <div class="tools">
+      <label class="search" for="q">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+        <input id="q" type="search" placeholder="Buscar una herramienta o concepto…" autocomplete="off">
+        <span class="count" id="count"></span>
+      </label>
+      <div class="prog">
+        <div class="prog-top"><span><b id="pn">0</b> de 8 fases estudiadas</span><button class="linkbtn" id="reset" type="button">Reiniciar</button></div>
+        <div class="bar"><i id="pbar"></i></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="side" aria-label="Fases"><ol id="navlist"></ol></nav>
+    <main class="phases" id="phases"></main>
+  </div>
+  <p class="empty" id="empty">No hay resultados. Prueba con otra palabra, por ejemplo «cache», «docker» o «jwt».</p>
+</div>
+
+<script>
+const I=(n,d,t,k)=>({n,d,t:t||[],k});
+const PH=[
+{id:1,h:255,short:'Diseño',title:'Diseño y arquitectura',sub:'Cómo se escribe y cómo se organiza el código, y cómo se despliega el sistema completo.',
+ groups:[
+  {title:'Principios de diseño de código',note:'Buenas prácticas base. Los cinco principios SOLID y tres reglas complementarias.',items:[
+   I('Responsabilidad única','Una sola razón para cambiar por clase o módulo.',['Single Responsibility'],'S'),
+   I('Abierto / cerrado','Abierto a extensión, cerrado a modificación.',['Open/Closed'],'O'),
+   I('Sustitución de Liskov','Las clases derivadas sustituyen a sus clases base.',['Liskov Substitution'],'L'),
+   I('Segregación de interfaces','Interfaces pequeñas y específicas.',['Interface Segregation'],'I'),
+   I('Inversión de dependencias','Depender de abstracciones, no de detalles.',['Dependency Inversion'],'D'),
+   I('DRY','No repitas lo que ya escribiste.',['Don\'t Repeat Yourself']),
+   I('KISS','Mantén las soluciones simples.',['Keep It Simple']),
+   I('YAGNI','No construyas lo que todavía no necesitas.',['You Aren\'t Gonna Need It'])]},
+  {title:'Patrones de arquitectura de código',note:'Organización interna de una aplicación.',flow:['Controladores','Servicios','Repositorios'],flowNote:'Arquitectura en capas (N-Tier): cada capa habla con la siguiente.',items:[
+   I('Arquitectura en capas','N-Tier: controladores, servicios y repositorios.'),
+   I('Hexagonal','Ports & Adapters. El dominio puro queda aislado de la infraestructura.'),
+   I('Clean / Onion','La regla de dependencia apunta hacia las entidades centrales.'),
+   I('DDD','Domain-Driven Design: bounded contexts, agregados y entidades.')]},
+  {title:'Arquitectura del sistema',note:'Estrategia de despliegue.',items:[
+   I('Monolítica','Proceso único, despliegue unificado y base de datos centralizada.'),
+   I('Monolítica modular','Monolito con límites estrictos entre módulos. Es fácil de migrar después.'),
+   I('Microservicios','Servicios independientes desacoplados por dominio, con comunicación HTTP o gRPC.',['HTTP','gRPC']),
+   I('EDA','Event-Driven Architecture: comunicación reactiva y asíncrona mediante brokers y eventos.'),
+   I('Serverless / FaaS','Funciones efímeras bajo demanda, con escalado automático a cero.')]}],
+ quiz:{q:'Tu sistema tiene un solo despliegue y una sola base de datos, pero sus módulos tienen límites estrictos para separarlos más adelante. ¿Qué arquitectura es?',o:['Microservicios','Monolítica modular','Serverless / FaaS','EDA'],a:1,e:'Es un monolito con fronteras claras entre módulos, lo que facilita migrar a microservicios cuando haga falta.'}},
+
+{id:2,h:165,short:'Datos',title:'Modelado y persistencia de datos',sub:'Dónde viven los datos y cómo el código los alcanza.',
+ groups:[
+  {title:'Bases de datos SQL',note:'Relacionales y ACID.',items:[
+   I('PostgreSQL','Estándar avanzado: soporta JSONB, arrays y extensiones como pgvector.',['JSONB','pgvector']),
+   I('MySQL / MariaDB','Base clásica para web transaccional.'),
+   I('SQLite','Motor embebido local en un solo archivo.'),
+   I('Dialectos procedimentales','Lenguajes procedurales de cada motor.',['PL/pgSQL','T-SQL','PL/SQL'])]},
+  {title:'Bases de datos NoSQL',note:'No relacionales, según el tipo de dato.',items:[
+   I('Documentales','MongoDB, CouchDB (offline-first), Couchbase y RavenDB (ACID).',['MongoDB','CouchDB','Couchbase','RavenDB']),
+   I('Clave-valor / en memoria','Caché ultra rápida y sesiones.',['Redis','Valkey','Memcached']),
+   I('Multimodelo','Documentos JSON y grafos con el lenguaje AQL.',['ArangoDB','AQL']),
+   I('De grafos','Las relaciones son ciudadanas de primera clase, con Cypher.',['Neo4j','Cypher']),
+   I('Vectoriales (IA / RAG)','Búsqueda por similitud de embeddings.',['Qdrant','Milvus','Pinecone','Chroma','pgvector'])]},
+  {title:'Capa de abstracción de datos',note:'ORMs para SQL y ODMs para NoSQL.',tabs:[
+   {l:'ORM · Python',items:[
+    I('SQLAlchemy 2.0','Data Mapper, con Alembic para migraciones.',['Alembic']),
+    I('Django ORM','Active Record integrado en Django.'),
+    I('SQLModel','Combina SQLAlchemy y Pydantic.'),I('Tortoise ORM','ORM asíncrono para Python.'),I('Peewee','ORM pequeño y simple.')]},
+   {l:'ORM · TypeScript / Node.js',items:[I('Prisma','ORM con esquema declarativo.'),I('Drizzle ORM','ORM ligero con tipado estricto.'),I('TypeORM','ORM con decoradores.')]},
+   {l:'ORM · Java',items:[I('Hibernate / JPA','Estándar Java, con Spring Data JPA.',['Spring Data JPA'])]},
+   {l:'ODM · Node.js',items:[I('Mongoose','Esquemas y validaciones sobre MongoDB.')]},
+   {l:'ODM · Python',items:[I('Beanie','Asíncrono con Pydantic y Motor.',['Pydantic','Motor']),I('MongoEngine','ODM clásico para MongoDB.')]}]}],
+ quiz:{q:'Necesitas guardar embeddings para un sistema RAG y buscar por similitud. ¿Qué tipo de motor encaja?',o:['Vectorial, como Qdrant, Milvus o pgvector','Clave-valor puro, como Memcached','De grafos solamente','SQLite sin extensiones'],a:0,e:'Los motores vectoriales están hechos para almacenar embeddings y consultar los más parecidos. pgvector lo añade a PostgreSQL.'}},
+
+{id:3,h:45,short:'Frontend',title:'Desarrollo frontend',sub:'La interfaz que ve el usuario: lenguajes, frameworks y librerías de componentes.',
+ groups:[
+  {title:'Lenguajes base',items:[
+   I('Nativos','La base de toda página web.',['HTML5','CSS3','JavaScript ES6+']),
+   I('TypeScript','Compila a JS. Es el estándar de tipado estricto.'),
+   I('WebAssembly','Alto rendimiento en el navegador, con Rust, Go o C++.',['Wasm','Rust','Go','C++'])]},
+  {title:'Frameworks y meta-frameworks',items:[
+   I('React','Ecosistema dominante, Virtual DOM y JSX.',['Next.js']),
+   I('Angular','Enfoque enterprise, TypeScript nativo, arquitectura modular y Signals.',['Signals']),
+   I('Vue.js','Progresivo, con Composition API y SFC.',['Nuxt']),
+   I('Svelte / SolidJS','Compilación reactiva directa, sin Virtual DOM.')]},
+  {title:'Librerías de diseño y componentes UI',note:'Elige la pestaña según el framework.',tabs:[
+   {l:'Utilidades',items:[I('Tailwind CSS','Base de clases utilitarias.')]},
+   {l:'React',items:[
+    I('shadcn/ui','Estándar moderno: copias los componentes a tu proyecto. Usa Radix UI y Tailwind.',['Radix UI','Tailwind']),
+    I('MUI','Implementación de Material Design de Google.',['Material UI']),
+    I('Ant Design','Estándar para paneles de administración y tablas complejas.',['AntD']),
+    I('Chakra UI','Estilizado rápido mediante props.'),
+    I('HeroUI / NextUI','Estética moderna con Tailwind y animaciones fluidas.'),
+    I('Radix UI / Headless UI','Primitivas sin estilos, con accesibilidad WAI-ARIA completa.',['WAI-ARIA'])]},
+   {l:'Angular',items:[I('Angular Material','Componentes Material oficiales.'),I('PrimeNG','Suite amplia de componentes.'),I('NG-ZORRO','Componentes estilo Ant Design.')]},
+   {l:'Vue.js',items:[I('Vuetify','Material Design para Vue.'),I('PrimeVue','Suite de componentes.'),I('shadcn-vue','Versión Vue de shadcn/ui.')]}]}],
+ quiz:{q:'¿Qué librería te entrega componentes que copias a tu proyecto, construidos con Radix UI y Tailwind?',o:['Ant Design','Chakra UI','shadcn/ui','Vuetify'],a:2,e:'shadcn/ui no se instala como dependencia cerrada: copias el código de los componentes y lo adaptas.'}},
+
+{id:4,h:325,short:'Backend',title:'Desarrollo backend y seguridad',sub:'La lógica del servidor y cómo se protege el acceso de los usuarios.',
+ groups:[
+  {title:'Frameworks web de Python',items:[
+   I('FastAPI','Asíncrono nativo, validación con Pydantic y documentación OpenAPI/Swagger automática.',['#1','Pydantic','OpenAPI']),
+   I('Django','Baterías incluidas, panel de administración nativo y ORM integrado.',['#2']),
+   I('Flask','Microframework minimalista y flexible.')]},
+  {title:'Autenticación y sesiones',items:[
+   I('Stateless','JWT (JSON Web Tokens) con PyJWT y los claims sub, exp e iat.',['JWT','PyJWT','sub','exp','iat']),
+   I('Stateful','Sesiones con cookies HttpOnly seguras y almacenamiento en Redis.',['HttpOnly','Redis'])]},
+  {title:'Seguridad de contraseñas',note:'Nunca se guarda la contraseña: se guarda su hash.',items:[
+   I('Argon2','Recomendado oficialmente por OWASP.',['OWASP']),
+   I('Bcrypt','Estándar maduro, compatible con passlib, bcrypt y pwdlib.',['passlib','pwdlib'])]},
+  {title:'Protocolos y suites de identidad',items:[
+   I('OAuth 2.0 y OpenID Connect','Protocolos para login social, con Authlib.',['OIDC','Authlib']),
+   I('fastapi-users','Suite en código: registro, JWT y reseteo de claves.'),
+   I('Servidores de autenticación','Servicios dedicados de identidad.',['Supabase Auth','Keycloak','Authentik','Clerk'])]}],
+ quiz:{q:'¿Qué algoritmo de hash de contraseñas recomienda oficialmente OWASP?',o:['MD5','Argon2','Base64','SHA-1 sin sal'],a:1,e:'Argon2 es el recomendado por OWASP. Bcrypt sigue siendo un estándar maduro y aceptable.'}},
+
+{id:5,h:290,short:'IA',title:'Inteligencia artificial y deep learning',sub:'Cómo se entrena, se guarda y se sirve un modelo (MLOps).',
+ groups:[
+  {title:'Entrenamiento y experimentación',items:[
+   I('PyTorch','Estándar en LLMs e investigación.'),I('TensorFlow','Framework de Google para producción y móvil.'),I('Keras / Keras 3','API de alto nivel para construir redes.')]},
+  {title:'Formatos de guardado de modelos',note:'La extensión indica quién puede leer el modelo.',tabs:[
+   {l:'Keras / TensorFlow',items:[I('Keras 3','ZIP autónomo.',['.keras']),I('Keras 2 (legado)','Formato antiguo.',['.h5']),I('SavedModel','Directorio de TensorFlow.'),I('TensorFlow Lite','Para móvil y dispositivos.',['.tflite'])]},
+   {l:'PyTorch y Hugging Face',items:[I('Checkpoints','Usan Pickle.',['.pt','.pth']),I('TorchScript','Modelo compilado para C++.'),I('Safetensors','Seguro, con zero-copy mmap.')]},
+   {l:'LLMs cuantizados',items:[I('GGUF','CPU o GPU local mediante llama.cpp.',['llama.cpp']),I('GPTQ / AWQ','4 bits para GPU.')]},
+   {l:'Interoperable',items:[I('ONNX','Formato abierto, universal para cualquier lenguaje.',['.onnx'])]},
+   {l:'ML clásico',items:[I('Scikit-learn','Serialización de modelos clásicos.',['.joblib','.pkl']),I('XGBoost / LightGBM','Guardan en JSON.',['.json'])]}]},
+  {title:'Inferencia y lenguajes',items:[
+   I('Python','Lectura nativa de los modelos.',['.keras','.h5','.pt']),
+   I('Java, Rust, Go, PHP','Inferencia multiplataforma exportando a ONNX Runtime (ORT).',['ONNX Runtime'])]},
+  {title:'Serving y despliegue de modelos',items:[
+   I('vLLM','Inferencia rápida para LLMs.'),I('Triton Inference Server','Servidor de inferencia multimodelo.'),I('TorchServe','Serving para PyTorch.'),I('TF Serving','Serving para TensorFlow.'),I('Hugging Face / Transformers','Plataforma y librería de modelos.')]}],
+ quiz:{q:'Entrenaste un modelo en PyTorch y lo necesitas ejecutar desde Java o Go. ¿Qué ruta es la adecuada?',o:['Guardar en .pkl','Exportar a ONNX y usar ONNX Runtime','Usar .h5 de Keras 2','Reescribir el modelo en PHP'],a:1,e:'ONNX es el formato abierto e interoperable, y ONNX Runtime ofrece inferencia en Java, Rust, Go y PHP.'}},
+
+{id:6,h:195,short:'Contenedores',title:'Empaquetado, contenedores y DevOps',sub:'Cómo se empaqueta la aplicación para que corra igual en cualquier máquina.',
+ groups:[
+  {title:'Plataformas de contenedores',items:[
+   I('Docker','Estándar de la industria. Incluye el daemon dockerd, la CLI y BuildKit.',['dockerd','BuildKit']),
+   I('Podman','Sin demonio (daemonless), ejecución rootless sin permisos elevados y soporte de pods.',['daemonless','rootless'])]},
+  {title:'Herramientas especializadas de construcción',items:[
+   I('Buildah','Construye imágenes OCI sin Dockerfile ni demonio.',['OCI']),
+   I('Skopeo','Inspecciona, copia y firma imágenes directamente entre registries remotos.')]},
+  {title:'Runtimes de bajo nivel',flow:['Docker o Kubernetes','containerd','runc'],flowNote:'Cadena típica de ejecución.',items:[
+   I('containerd','Runtime base industrial para Docker y Kubernetes.'),
+   I('CRI-O','Runtime optimizado exclusivamente para nodos Kubernetes.'),
+   I('runc','Runtime ejecutor OCI.')]},
+  {title:'Orquestación',items:[
+   I('Docker Compose','Define y ejecuta varios contenedores en local con archivos YAML.',['YAML']),
+   I('Kubernetes (K8s)','Orquestación distribuida para producción.',['Pods','Services','Ingress','Deployments'])]}],
+ quiz:{q:'Necesitas ejecutar contenedores sin demonio y sin permisos de administrador. ¿Qué plataforma usas?',o:['Podman','containerd','Docker con dockerd','CRI-O'],a:0,e:'Podman es daemonless y permite ejecución rootless.'}},
+
+{id:7,h:95,short:'Cloud',title:'Infraestructura cloud y hosting',sub:'Dónde corre el sistema en producción y qué servicio equivale a cuál entre proveedores.',
+ groups:[
+  {title:'Hyperscalers: equivalencias',note:'Elige un proveedor para resaltar su columna.',table:{
+   head:['Servicio','AWS','Azure','GCP'],
+   rows:[['Máquinas virtuales','EC2','Virtual Machines','Compute Engine'],['Contenedores serverless','ECS (Fargate)','Container Apps','Cloud Run'],['Kubernetes gestionado','EKS','AKS','GKE'],['Serverless (FaaS)','Lambda','Azure Functions','Cloud Functions'],['Storage de objetos','S3','Blob Storage','Cloud Storage'],['Bases de datos SQL','RDS / Aurora','Azure SQL / PostgreSQL','Cloud SQL / Spanner'],['Bases de datos NoSQL','DynamoDB','Cosmos DB','Firestore / Bigtable'],['Colas / mensajería','SQS / SNS','Service Bus','Cloud Pub/Sub'],['Plataforma de IA / ML','SageMaker / Bedrock','Azure OpenAI','Vertex AI']]}},
+  {title:'PaaS modernos',note:'Git-push y despliegue rápido.',items:[
+   I('Railway','Microservicios, bases de datos y canvas visual.'),
+   I('Render','APIs en FastAPI, workers en segundo plano y bases de datos gestionadas.'),
+   I('Fly.io','Contenedores desplegados en microVMs en el edge global.'),
+   I('Vercel / Netlify','Alojamiento y CDN global para frontends y Jamstack.')]},
+  {title:'Nubes IaaS alternativas',note:'VPS accesibles con precio fijo.',items:[
+   I('DigitalOcean','Droplets, Spaces y Kubernetes gestionado (DOKS).',['Droplets','Spaces','DOKS']),
+   I('Linode / Akamai','Servidores virtuales Linux de alto rendimiento.'),
+   I('Hetzner Cloud','Mejor relación costo/rendimiento para VPS y servidores dedicados.')]},
+  {title:'Redes edge y almacenamiento autónomo',items:[
+   I('Cloudflare','CDN global, DNS Anycast y Workers.',['Workers','Anycast']),
+   I('Cloudflare R2','Almacenamiento de objetos sin costo de salida.'),
+   I('Cloudflare Tunnels','Exposición segura de servicios sin abrir puertos.')]}],
+ quiz:{q:'¿Cuál es el servicio de GCP equivalente a AWS Lambda?',o:['Compute Engine','Cloud Run','Cloud Functions','Cloud Pub/Sub'],a:2,e:'Lambda, Azure Functions y Cloud Functions son los servicios FaaS (serverless) de cada nube.'}},
+
+{id:8,h:15,short:'Dominios',title:'Dominios y resolución DNS',sub:'La salida a producción: el nombre con el que los usuarios llegan a tu sistema.',
+ groups:[
+  {title:'Registradores de dominios',note:'Compra, recarga y renovación anual.',items:[
+   I('Cloudflare Registrar','Renovación a precio de costo mayorista de ICANN, sin márgenes añadidos.',['ICANN']),
+   I('Porkbun','Precios bajos fijos. La renovación cuesta lo mismo que la compra.'),
+   I('Namecheap','Panel amigable, promociones y saldo prepagado en la cuenta.'),
+   I('OVHcloud','Amplio catálogo de dominios internacionales y europeos.'),
+   I('Mi.com.co','Registrador acreditado para extensiones territoriales con pagos locales.',['.co','.com.co','.edu.co'])]},
+  {title:'Administración de zonas DNS',items:[
+   I('Cloudflare DNS','Servidores Anycast de baja latencia, proxy inverso y protección contra DDoS.',['DDoS']),
+   I('AWS Route 53','Enrutamiento por latencia, por geolocalización y conmutación por error ante caídas.',['failover']),
+   I('Google Cloud DNS / Azure DNS','Resolución gestionada e integrada en la infraestructura cloud.')]}],
+ quiz:{q:'Quieres registrar un dominio .com.co y pagar con medios locales. ¿Qué registrador de la lista encaja?',o:['Porkbun','Mi.com.co','OVHcloud','Namecheap'],a:1,e:'Mi.com.co es un registrador acreditado para extensiones territoriales como .co, .com.co y .edu.co.'}}
+];
+
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const KEY='roadmap-sw-done';
+let done=new Set();
+try{done=new Set(JSON.parse(localStorage.getItem(KEY)||'[]'))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify([...done]))}catch(e){}};
+
+const itemHTML=it=>{
+  const txt=norm([it.n,it.d,...it.t].join(' '));
+  return `<article class="item" data-text="${esc(txt)}">${it.k?`<span class="k" aria-hidden="true">${esc(it.k)}</span>`:''}<div><h4>${esc(it.n)}</h4>${it.t.length?`<div class="tags">${it.t.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}<p>${esc(it.d)}</p></div></article>`;
+};
+const gridHTML=items=>`<div class="grid">${items.map(itemHTML).join('')}</div>`;
+
+function groupHTML(g,pi,gi){
+  let body='';
+  if(g.flow) body+=`<ol class="flow" aria-label="${esc(g.flowNote||'Flujo')}">${g.flow.map(f=>`<li>${esc(f)}</li>`).join('')}</ol>${g.flowNote?`<p class="note">${esc(g.flowNote)}</p>`:''}`;
+  if(g.items) body+=gridHTML(g.items);
+  if(g.tabs){
+    body+=`<div class="tabs" role="tablist">${g.tabs.map((t,i)=>`<button class="tab" role="tab" id="t-${pi}-${gi}-${i}" aria-selected="${i===0}" data-g="${pi}-${gi}" data-i="${i}" type="button">${esc(t.l)}</button>`).join('')}</div>`;
+    body+=g.tabs.map((t,i)=>`<div class="panel${i===0?' on':''}" role="tabpanel" data-g="${pi}-${gi}" data-i="${i}"><p class="plabel">${esc(t.l)}</p>${gridHTML(t.items)}</div>`).join('');
+  }
+  if(g.table){
+    const P=['aws','azure','gcp'];
+    body+=`<div class="seg" role="group" aria-label="Resaltar proveedor"><span>Resaltar:</span>${[['all','Todos'],['aws','AWS'],['azure','Azure'],['gcp','GCP']].map(([v,l],i)=>`<button class="tab" id="hl-${v}" type="button" data-hl="${v}" aria-pressed="${i===0}">${l}</button>`).join('')}</div>`;
+    body+=`<div class="tablewrap"><table id="cloudtable" data-hl="all"><thead><tr>${g.table.head.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${g.table.rows.map(r=>`<tr class="row" data-text="${esc(norm(r.join(' ')))}">${r.map((c,i)=>i?`<td data-p="${P[i-1]}">${esc(c)}</td>`:`<th scope="row" style="text-transform:none;letter-spacing:0;font-family:var(--f-body);font-size:14.5px;color:var(--ink);font-weight:600">${esc(c)}</th>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
+  return `<div class="group"><h3>${esc(g.title)}</h3>${g.note&&!g.flow?`<p class="note">${esc(g.note)}</p>`:''}${body}</div>`;
+}
+
+function phaseHTML(p,pi){
+  const q=p.quiz;
+  return `<section class="phase" id="fase-${p.id}" style="--h:${p.h}" aria-labelledby="h-${p.id}">
+    <div class="ph"><span class="num">Fase ${p.id} de 8</span><h2 id="h-${p.id}">${esc(p.title)}</h2><p>${esc(p.sub)}</p></div>
+    ${p.groups.map((g,gi)=>groupHTML(g,pi,gi)).join('')}
+    <div class="foot">
+      <div class="quiz" data-p="${pi}"><p class="qlabel">Comprueba lo aprendido</p><p class="q">${esc(q.q)}</p>
+        <div class="opts">${q.o.map((o,j)=>`<button class="opt" id="o-${pi}-${j}" type="button" data-j="${j}">${esc(o)}</button>`).join('')}</div>
+        <p class="fb" aria-live="polite" hidden></p></div>
+      <button class="donebtn" id="done-${p.id}" type="button" data-id="${p.id}"></button>
+    </div>
+  </section>`;
+}
+
+$('#phases').innerHTML=PH.map(phaseHTML).join('');
+$('#navlist').innerHTML=PH.map(p=>`<li style="--h:${p.h}"><a href="#fase-${p.id}" id="nav-${p.id}" data-id="${p.id}"><span class="n">${String(p.id).padStart(2,'0')}</span><span>${esc(p.short)}</span><span class="chk" aria-hidden="true">✓</span></a></li>`).join('');
+
+function paint(){
+  PH.forEach(p=>{
+    const d=done.has(p.id);
+    $('#nav-'+p.id).classList.toggle('done',d);
+    const b=$('#done-'+p.id); b.classList.toggle('is',d); b.textContent=d?'Fase estudiada ✓':'Marcar fase como estudiada';
+    b.setAttribute('aria-pressed',d);
+  });
+  $('#pn').textContent=done.size; $('#pbar').style.width=(done.size/PH.length*100)+'%';
+}
+paint();
+
+document.addEventListener('click',e=>{
+  const tab=e.target.closest('.tab[role="tab"]');
+  if(tab){
+    const g=tab.dataset.g;
+    $$(`.tab[data-g="${g}"]`).forEach(t=>t.setAttribute('aria-selected',t===tab));
+    $$(`.panel[data-g="${g}"]`).forEach(p=>p.classList.toggle('on',p.dataset.i===tab.dataset.i));
+    return;
+  }
+  const hl=e.target.closest('[data-hl]');
+  if(hl&&hl.tagName==='BUTTON'){
+    $('#cloudtable').dataset.hl=hl.dataset.hl;
+    $$('button[data-hl]').forEach(b=>b.setAttribute('aria-pressed',b===hl));
+    return;
+  }
+  const opt=e.target.closest('.opt');
+  if(opt){
+    const box=opt.closest('.quiz'), q=PH[+box.dataset.p].quiz, j=+opt.dataset.j, fb=$('.fb',box);
+    if(j===q.a){
+      opt.classList.add('ok');
+      $$('.opt',box).forEach(b=>b.disabled=true);
+      fb.textContent='Correcto. '+q.e;
+    }else{
+      opt.classList.add('no'); opt.disabled=true;
+      fb.textContent='Todavía no. Prueba con otra opción.';
+    }
+    fb.hidden=false; return;
+  }
+  const db=e.target.closest('.donebtn');
+  if(db){const id=+db.dataset.id; done.has(id)?done.delete(id):done.add(id); save(); paint();}
+});
+$('#reset').addEventListener('click',()=>{done.clear();save();paint();});
+
+/* Búsqueda */
+const root=$('#root');
+function filter(raw){
+  const q=norm(raw.trim());
+  root.classList.toggle('searching',!!q);
+  $$('.item,tr.row').forEach(el=>{el.hidden=!!q&&!el.dataset.text.includes(q)});
+  $$('.panel').forEach(p=>{p.hidden=!!q&&!$('.item:not([hidden])',p)});
+  $$('.group').forEach(g=>{g.hidden=!!q&&!$('.item:not([hidden]),tr.row:not([hidden])',g)});
+  let shown=0;
+  $$('.phase').forEach(p=>{
+    p.hidden=!!q&&!$('.group:not([hidden])',p);
+    $('.foot',p).hidden=!!q;
+    if(!p.hidden)shown++;
+  });
+  $$('.item:not([hidden]),tr.row:not([hidden])').length;
+  const n=q?$$('.item:not([hidden]),tr.row:not([hidden])').length:0;
+  $('#count').textContent=q?`${n} resultado${n===1?'':'s'}`:'';
+  root.classList.toggle('none',!!q&&shown===0);
+  $('#empty').hidden=!(q&&shown===0);
+}
+$('#q').addEventListener('input',e=>filter(e.target.value));
+$('#empty').hidden=true;
+
+/* Fase activa en el menú */
+if('IntersectionObserver' in window){
+  const vis=new Map();
+  const io=new IntersectionObserver(es=>{
+    es.forEach(en=>vis.set(en.target.id,en.isIntersecting));
+    const first=PH.find(p=>vis.get('fase-'+p.id));
+    if(first)$$('.side a').forEach(a=>a.classList.toggle('on',+a.dataset.id===first.id));
+  },{rootMargin:'-15% 0px -65% 0px'});
+  $$('.phase').forEach(s=>io.observe(s));
+}
+$('#nav-1').classList.add('on');
+</script>
+
+</body></html>
